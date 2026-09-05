@@ -1,0 +1,128 @@
+{
+  "$schema": "habagat-design/tokens/base.tokens.json",
+  "$description": "Shared primitive tokens. Neither internal-operator nor customer token sets duplicate a value defined here — they only reference or override it. Derived per Doc 60 §4 'tokens/' instruction. Color RAMPS are primitives; SEMANTIC color roles (bg, text, border, accent) are assigned per theme in the two theme files, because a role's mapping to a ramp step differs between the dense internal context and the airier customer context (Doc 56 §5.1).",
+
+  "color": {
+    "$comment": "Two ramps: a neutral (slate, slightly cool-toned so it never reads as 'default grey') and a brand teal used for the accent role in both themes. Contrast pairs below are pre-verified against WCAG 2.1 AA (4.5:1 body text, 3:1 large text/UI) — see handoff/accessibility-contrast-matrix.md for the verification table.",
+    "neutral": {
+      "0":   { "value": "#FFFFFF" },
+      "50":  { "value": "#F7F9FA" },
+      "100": { "value": "#EDF1F2" },
+      "150": { "value": "#E1E7E9" },
+      "200": { "value": "#CBD5D8" },
+      "300": { "value": "#A8B7BB" },
+      "400": { "value": "#7E9096" },
+      "500": { "value": "#5E7278" },
+      "600": { "value": "#455459" },
+      "700": { "value": "#333F43" },
+      "800": { "value": "#212A2D" },
+      "900": { "value": "#14191B" },
+      "950": { "value": "#0B0E10" }
+    },
+    "teal": {
+      "50":  { "value": "#EAFAF6" },
+      "100": { "value": "#CDF1E7" },
+      "200": { "value": "#98E1CD" },
+      "300": { "value": "#5FCBAE" },
+      "400": { "value": "#33AF91" },
+      "500": { "value": "#1C8E74" },
+      "600": { "value": "#146F5B" },
+      "700": { "value": "#0F5748" },
+      "800": { "value": "#0C463B" },
+      "900": { "value": "#0A3830" }
+    },
+    "amber": {
+      "$comment": "Semantic-warning ramp, distinct from the teal accent per Doc 56's 'semantic color is separate from the accent hue' discipline.",
+      "100": { "value": "#FDEFD3" },
+      "300": { "value": "#F0BE63" },
+      "500": { "value": "#C9861A" },
+      "700": { "value": "#8F5E10" }
+    },
+    "red": {
+      "100": { "value": "#FBE4E1" },
+      "300": { "value": "#EE9A8E" },
+      "500": { "value": "#C63D28" },
+      "700": { "value": "#8F2A1A" }
+    },
+    "green": {
+      "100": { "value": "#E1F5E5" },
+      "300": { "value": "#82CE93" },
+      "500": { "value": "#2D8F45" },
+      "700": { "value": "#1F6631" }
+    },
+    "blue": {
+      "$comment": "Used only for 'informational' semantic states (e.g. shadow-mode badges) — never repurposed as the accent.",
+      "100": { "value": "#E1EEFB" },
+      "300": { "value": "#87BAEE" },
+      "500": { "value": "#2C6FBF" },
+      "700": { "value": "#1E4E87" }
+    }
+  },
+
+  "typography": {
+    "fontFamily": {
+      "display":   { "value": "'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif", "$comment": "Headings, screen titles, the Escalation Review header sentence." },
+      "body":      { "value": "'Inter', 'Segoe UI', system-ui, sans-serif" },
+      "mono":      { "value": "'IBM Plex Mono', 'Cascadia Code', ui-monospace, monospace", "$comment": "Run IDs, blueprint versions, PO/invoice line-item figures, anything tabular-numeric." }
+    },
+    "scale": {
+      "$comment": "A type scale shared by both themes; the CUSTOMER theme uses one step larger at each rank for body/label sizes per its 'more whitespace, plainer' brief (see customer.tokens.json).",
+      "100": { "value": "12px", "lineHeight": "16px" },
+      "200": { "value": "13px", "lineHeight": "18px" },
+      "300": { "value": "14px", "lineHeight": "20px" },
+      "400": { "value": "15px", "lineHeight": "22px" },
+      "500": { "value": "17px", "lineHeight": "24px" },
+      "600": { "value": "20px", "lineHeight": "26px" },
+      "700": { "value": "24px", "lineHeight": "30px" },
+      "800": { "value": "30px", "lineHeight": "36px" }
+    },
+    "weight": {
+      "regular":  { "value": "400" },
+      "medium":   { "value": "500" },
+      "semibold": { "value": "600" },
+      "bold":     { "value": "700" }
+    }
+  },
+
+  "spacing": {
+    "$comment": "4px base unit. Named, not just numbered, so a component spec can say 'gap: spacing.gap-tight' and a reviewer can tell intent from the token name.",
+    "0":  { "value": "0px" },
+    "1":  { "value": "4px" },
+    "2":  { "value": "8px" },
+    "3":  { "value": "12px" },
+    "4":  { "value": "16px" },
+    "5":  { "value": "20px" },
+    "6":  { "value": "24px" },
+    "8":  { "value": "32px" },
+    "10": { "value": "40px" },
+    "12": { "value": "48px" },
+    "16": { "value": "64px" }
+  },
+
+  "radii": {
+    "sm": { "value": "3px", "$comment": "Chips, badges, small controls." },
+    "md": { "value": "6px", "$comment": "Cards, panels, inputs." },
+    "lg": { "value": "10px", "$comment": "Modals, the Escalation Review screen's evidence panel container." },
+    "full": { "value": "9999px", "$comment": "Pills — used ONLY for status pills, never for buttons (buttons use md, per handoff/design-log.md decision #2)." }
+  },
+
+  "shadow": {
+    "$comment": "Elevation is spent sparingly per artifact-design guidance — only the modal/inline-editor layer and the Teams-card-equivalent 'floating' surfaces get a shadow. Flat panels (the evidence panel itself) use a border, not a shadow, to read as part of the page rather than floating above it.",
+    "raised":   { "value": "0 2px 8px rgba(11, 14, 16, 0.10), 0 1px 2px rgba(11, 14, 16, 0.06)" },
+    "overlay":  { "value": "0 12px 32px rgba(11, 14, 16, 0.18), 0 4px 8px rgba(11, 14, 16, 0.08)" }
+  },
+
+  "motion": {
+    "$comment": "Durations only — the Escalation Review screen and Fleet Overview grid both favor near-instant feedback (Doc 56 §2.1 'seconds, not minutes'); nothing in this system uses a duration above 'moderate,' and decorative motion is out of scope entirely per the design brief's fidelity-to-Doc-56 constraint.",
+    "instant":  { "value": "80ms" },
+    "quick":    { "value": "140ms" },
+    "moderate": { "value": "220ms" },
+    "easing":   { "value": "cubic-bezier(0.2, 0, 0, 1)" }
+  },
+
+  "breakpoint": {
+    "$comment": "The Console is a behind-login SPA (Doc 56 §1.1) used primarily on desktop/laptop by reviewers and operators at a desk. Two breakpoints, not five — this is a working tool, not a marketing site.",
+    "compact": { "value": "0px",     "$comment": "Down to a tablet in portrait — supports a reviewer clearing the Approval Queue from a tablet between meetings." },
+    "wide":    { "value": "1024px",  "$comment": "The default authoring/reviewing width; the Fleet Overview matrix and the Escalation Review's side-by-side evidence panel both assume this width or greater as their primary target." }
+  }
+}

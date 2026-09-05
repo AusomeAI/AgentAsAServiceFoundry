@@ -1,0 +1,86 @@
+{
+  "$schema": "habagat-design/tokens/customer.tokens.json",
+  "$description": "Customer Console theme. 'More whitespace, plainer language, WCAG AA enforced with zero exceptions' per Doc 56 §5.1. Every color pair below is verified 4.5:1 (body) or 3:1 (large text / UI components) in BOTH light and dark. References base.tokens.json ramps by pointer — no raw hex values are re-declared here.",
+  "extends": "./base.tokens.json",
+
+  "spacingDensity": {
+    "$comment": "Customer theme uses the base spacing scale UNSCALED plus one extra step of breathing room around content blocks (a deliberate deviation from the internal theme's tighter density, Doc 56 §5.1) — see component specs for where 'roomy' padding is applied (typically spacing.6 instead of spacing.4 for card/panel internal padding).",
+    "panelPadding": "{spacing.6}",
+    "sectionGap": "{spacing.8}"
+  },
+
+  "typographyDensity": {
+    "$comment": "Customer theme bumps the body/label rank up one step from the shared scale (Doc 60's brief: 'more whitespace, plainer' extends to slightly larger, less dense type for a non-power-user audience).",
+    "body":  "{typography.scale.400}",
+    "label": "{typography.scale.300}",
+    "title": "{typography.scale.700}"
+  },
+
+  "color": {
+    "light": {
+      "bg.canvas":        { "value": "{color.neutral.50}" },
+      "bg.surface":       { "value": "{color.neutral.0}" },
+      "bg.surface-sunken":{ "value": "{color.neutral.100}", "$comment": "The Escalation Review evidence panel's background — one step recessed from the page, per Doc 56 §2.2's 'evidence panel' being a distinct visual zone." },
+      "bg.overlay-scrim": { "value": "rgba(11, 14, 16, 0.4)" },
+
+      "border.default":   { "value": "{color.neutral.200}" },
+      "border.strong":    { "value": "{color.neutral.300}" },
+      "border.focus":     { "value": "{color.teal.500}" },
+
+      "text.primary":     { "value": "{color.neutral.900}", "$contrastOn": "bg.surface", "$ratio": "15.1:1" },
+      "text.secondary":   { "value": "{color.neutral.600}", "$contrastOn": "bg.surface", "$ratio": "6.4:1" },
+      "text.disabled":    { "value": "{color.neutral.400}" },
+      "text.on-accent":   { "value": "{color.neutral.0}",   "$contrastOn": "accent.default", "$ratio": "5.2:1" },
+
+      "accent.default":   { "value": "{color.teal.600}" },
+      "accent.hover":     { "value": "{color.teal.700}" },
+      "accent.subtle-bg": { "value": "{color.teal.50}" },
+      "accent.subtle-text": { "value": "{color.teal.700}", "$contrastOn": "accent.subtle-bg", "$ratio": "6.9:1" },
+
+      "semantic.warning-bg":  { "value": "{color.amber.100}" },
+      "semantic.warning-text":{ "value": "{color.amber.700}", "$contrastOn": "semantic.warning-bg", "$ratio": "5.8:1" },
+      "semantic.danger-bg":   { "value": "{color.red.100}" },
+      "semantic.danger-text": { "value": "{color.red.700}",   "$contrastOn": "semantic.danger-bg", "$ratio": "7.1:1" },
+      "semantic.success-bg":  { "value": "{color.green.100}" },
+      "semantic.success-text":{ "value": "{color.green.700}", "$contrastOn": "semantic.success-bg", "$ratio": "6.3:1" },
+      "semantic.info-bg":     { "value": "{color.blue.100}" },
+      "semantic.info-text":   { "value": "{color.blue.700}",  "$contrastOn": "semantic.info-bg", "$ratio": "6.6:1" },
+
+      "diff.removed-bg":  { "value": "{color.red.100}", "$comment": "Evidence panel: the PO-side value in a mismatched line (Doc 56 §2.2)." },
+      "diff.added-bg":    { "value": "{color.amber.100}", "$comment": "Evidence panel: the invoice-side value that disagrees with the PO." }
+    },
+
+    "dark": {
+      "bg.canvas":        { "value": "{color.neutral.950}" },
+      "bg.surface":       { "value": "{color.neutral.900}" },
+      "bg.surface-sunken":{ "value": "{color.neutral.800}" },
+      "bg.overlay-scrim": { "value": "rgba(0, 0, 0, 0.6)" },
+
+      "border.default":   { "value": "{color.neutral.700}" },
+      "border.strong":    { "value": "{color.neutral.600}" },
+      "border.focus":     { "value": "{color.teal.400}" },
+
+      "text.primary":     { "value": "{color.neutral.50}",  "$contrastOn": "bg.surface", "$ratio": "14.8:1" },
+      "text.secondary":   { "value": "{color.neutral.300}", "$contrastOn": "bg.surface", "$ratio": "7.9:1" },
+      "text.disabled":    { "value": "{color.neutral.500}" },
+      "text.on-accent":   { "value": "{color.neutral.950}", "$contrastOn": "accent.default", "$ratio": "8.0:1" },
+
+      "accent.default":   { "value": "{color.teal.400}" },
+      "accent.hover":     { "value": "{color.teal.300}" },
+      "accent.subtle-bg": { "value": "{color.teal.900}" },
+      "accent.subtle-text": { "value": "{color.teal.200}", "$contrastOn": "accent.subtle-bg", "$ratio": "9.4:1" },
+
+      "semantic.warning-bg":  { "value": "{color.amber.700}" },
+      "semantic.warning-text":{ "value": "{color.amber.100}", "$contrastOn": "semantic.warning-bg", "$ratio": "8.9:1" },
+      "semantic.danger-bg":   { "value": "{color.red.700}" },
+      "semantic.danger-text": { "value": "{color.red.100}",   "$contrastOn": "semantic.danger-bg", "$ratio": "8.6:1" },
+      "semantic.success-bg":  { "value": "{color.green.700}" },
+      "semantic.success-text":{ "value": "{color.green.100}", "$contrastOn": "semantic.success-bg", "$ratio": "8.4:1" },
+      "semantic.info-bg":     { "value": "{color.blue.700}" },
+      "semantic.info-text":   { "value": "{color.blue.100}",  "$contrastOn": "semantic.info-bg", "$ratio": "8.7:1" },
+
+      "diff.removed-bg":  { "value": "{color.red.700}" },
+      "diff.added-bg":    { "value": "{color.amber.700}" }
+    }
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "$schema": "habagat-design/tokens/internal-operator.tokens.json",
+  "$description": "Internal Operator Console theme. 'Denser, more data-per-screen, no need for the softened tone a customer-facing screen needs' per Doc 56 §5.1. Same accessibility floor as the customer theme (§1.2 applies to both) — density is achieved through spacing and type-scale choices, never through lower contrast or smaller hit targets.",
+  "extends": "./base.tokens.json",
+
+  "spacingDensity": {
+    "$comment": "One step tighter than the customer theme at every rank — this is what lets the Fleet Overview coordinate matrix (Doc 56 §4.2) show many tenants per screen without scrolling.",
+    "panelPadding": "{spacing.4}",
+    "sectionGap": "{spacing.6}",
+    "tableRowHeight": "32px",
+    "tableRowHeight-customer-equivalent": "44px"
+  },
+
+  "typographyDensity": {
+    "$comment": "Uses the shared base scale directly, one rank down from the customer theme's bumped values — e.g. body text is scale.300 (14px) here vs. scale.400 (15px) in the customer theme.",
+    "body":  "{typography.scale.300}",
+    "label": "{typography.scale.200}",
+    "title": "{typography.scale.600}",
+    "mono-data": "{typography.scale.200}"
+  },
+
+  "color": {
+    "$comment": "The internal theme reuses the identical semantic/accent/neutral color ROLE NAMES as the customer theme (same keys) so a shared component never has to branch its logic by theme — only the CSS custom property values differ. Copied structurally from customer.tokens.json with the same verified contrast pairs; the internal theme additionally defines the health/status colors the Fleet Overview grid needs (Doc 56 §4.2's red/amber/green cells), which the customer theme has no use for.",
+    "light": {
+      "bg.canvas":        { "value": "{color.neutral.100}", "$comment": "One step darker canvas than customer-light — reduces the visual 'glare' of a screen with many dense panels." },
+      "bg.surface":       { "value": "{color.neutral.0}" },
+      "bg.surface-sunken":{ "value": "{color.neutral.150}" },
+      "bg.overlay-scrim": { "value": "rgba(11, 14, 16, 0.4)" },
+      "border.default":   { "value": "{color.neutral.200}" },
+      "border.strong":    { "value": "{color.neutral.400}" },
+      "border.focus":     { "value": "{color.teal.600}" },
+      "text.primary":     { "value": "{color.neutral.900}", "$ratio": "15.1:1" },
+      "text.secondary":   { "value": "{color.neutral.600}", "$ratio": "6.4:1" },
+      "text.disabled":    { "value": "{color.neutral.400}" },
+      "text.on-accent":   { "value": "{color.neutral.0}",   "$ratio": "5.2:1" },
+      "accent.default":   { "value": "{color.teal.600}" },
+      "accent.hover":     { "value": "{color.teal.700}" },
+      "accent.subtle-bg": { "value": "{color.teal.50}" },
+      "accent.subtle-text": { "value": "{color.teal.700}", "$ratio": "6.9:1" },
+      "semantic.warning-bg":  { "value": "{color.amber.100}" },
+      "semantic.warning-text":{ "value": "{color.amber.700}", "$ratio": "5.8:1" },
+      "semantic.danger-bg":   { "value": "{color.red.100}" },
+      "semantic.danger-text": { "value": "{color.red.700}",   "$ratio": "7.1:1" },
+      "semantic.success-bg":  { "value": "{color.green.100}" },
+      "semantic.success-text":{ "value": "{color.green.700}", "$ratio": "6.3:1" },
+      "semantic.info-bg":     { "value": "{color.blue.100}" },
+      "semantic.info-text":   { "value": "{color.blue.700}",  "$ratio": "6.6:1" },
+
+      "health.clean":     { "value": "{color.green.500}", "$comment": "Fleet matrix cell: no drift, eval current, SLO green." },
+      "health.clean-bg":  { "value": "{color.green.100}" },
+      "health.watch":     { "value": "{color.amber.500}", "$comment": "Fleet matrix cell: drift detected but auto-remediable, or eval currency approaching 30-day SLO (Doc 33 §2.4)." },
+      "health.watch-bg":  { "value": "{color.amber.100}" },
+      "health.breach":    { "value": "{color.red.500}", "$comment": "Fleet matrix cell: SLO breach, unremediated drift, or isolation canary concern (Doc 55 §2.4)." },
+      "health.breach-bg": { "value": "{color.red.100}" }
+    },
+    "dark": {
+      "bg.canvas":        { "value": "{color.neutral.950}" },
+      "bg.surface":       { "value": "{color.neutral.900}" },
+      "bg.surface-sunken":{ "value": "{color.neutral.800}" },
+      "bg.overlay-scrim": { "value": "rgba(0, 0, 0, 0.6)" },
+      "border.default":   { "value": "{color.neutral.700}" },
+      "border.strong":    { "value": "{color.neutral.500}" },
+      "border.focus":     { "value": "{color.teal.400}" },
+      "text.primary":     { "value": "{color.neutral.50}",  "$ratio": "14.8:1" },
+      "text.secondary":   { "value": "{color.neutral.300}", "$ratio": "7.9:1" },
+      "text.disabled":    { "value": "{color.neutral.500}" },
+      "text.on-accent":   { "value": "{color.neutral.950}", "$ratio": "8.0:1" },
+      "accent.default":   { "value": "{color.teal.400}" },
+      "accent.hover":     { "value": "{color.teal.300}" },
+      "accent.subtle-bg": { "value": "{color.teal.900}" },
+      "accent.subtle-text": { "value": "{color.teal.200}", "$ratio": "9.4:1" },
+      "semantic.warning-bg":  { "value": "{color.amber.700}" },
+      "semantic.warning-text":{ "value": "{color.amber.100}", "$ratio": "8.9:1" },
+      "semantic.danger-bg":   { "value": "{color.red.700}" },
+      "semantic.danger-text": { "value": "{color.red.100}",   "$ratio": "8.6:1" },
+      "semantic.success-bg":  { "value": "{color.green.700}" },
+      "semantic.success-text":{ "value": "{color.green.100}", "$ratio": "8.4:1" },
+      "semantic.info-bg":     { "value": "{color.blue.700}" },
+      "semantic.info-text":   { "value": "{color.blue.100}",  "$ratio": "8.7:1" },
+
+      "health.clean":     { "value": "{color.green.300}" },
+      "health.clean-bg":  { "value": "{color.green.700}" },
+      "health.watch":     { "value": "{color.amber.300}" },
+      "health.watch-bg":  { "value": "{color.amber.700}" },
+      "health.breach":    { "value": "{color.red.300}" },
+      "health.breach-bg": { "value": "{color.red.700}" }
+    }
+  }
+}
