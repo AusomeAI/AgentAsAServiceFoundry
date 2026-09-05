@@ -1,0 +1,591 @@
+<title>Habagat Agent Foundry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --paper:#EBF0EF; --surface:#FFFFFF; --surface-2:#F4F7F6; --sunken:#E2E9E7;
+  --ink:#0D1B1E; --ink-2:#3A4C4E; --ink-3:#68797A;
+  --line:#CBD7D5; --line-soft:#DCE5E3;
+  --teal:#12655C; --teal-bright:#189183; --indigo:#2C3E77; --amber:#A8720C; --coral:#A8452F;
+  --l0:#68797A; --l1:#2C3E77; --l2:#12655C; --l3:#A8720C; --l4:#A8452F;
+  --shadow:0 1px 2px rgba(13,27,30,.05), 0 8px 24px -12px rgba(13,27,30,.18);
+  --display:"Bricolage Grotesque", ui-sans-serif, system-ui, sans-serif;
+  --body:"Source Serif 4", Georgia, "Times New Roman", serif;
+  --mono:"IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --spine:74rem;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0A1416; --surface:#101E20; --surface-2:#142628; --sunken:#0D1A1C;
+    --ink:#E6EFED; --ink-2:#A9BDBB; --ink-3:#7D9291;
+    --line:#22383A; --line-soft:#1A2C2E;
+    --teal:#4FBFAE; --teal-bright:#6FD9C6; --indigo:#8FA4E3; --amber:#D9A63F; --coral:#E0836C;
+    --l0:#7D9291; --l1:#8FA4E3; --l2:#4FBFAE; --l3:#D9A63F; --l4:#E0836C;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0A1416; --surface:#101E20; --surface-2:#142628; --sunken:#0D1A1C;
+  --ink:#E6EFED; --ink-2:#A9BDBB; --ink-3:#7D9291;
+  --line:#22383A; --line-soft:#1A2C2E;
+  --teal:#4FBFAE; --teal-bright:#6FD9C6; --indigo:#8FA4E3; --amber:#D9A63F; --coral:#E0836C;
+  --l0:#7D9291; --l1:#8FA4E3; --l2:#4FBFAE; --l3:#D9A63F; --l4:#E0836C;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.7);
+}
+
+*{box-sizing:border-box}
+body{background:var(--paper); color:var(--ink); font-family:var(--body); font-size:17px; line-height:1.65; -webkit-font-smoothing:antialiased;}
+h1,h2,h3,h4{font-family:var(--display); font-weight:600; text-wrap:balance; line-height:1.15; margin:0;}
+p{margin:0}
+a{color:var(--teal); text-decoration-thickness:1px; text-underline-offset:2px}
+a:focus-visible,button:focus-visible,select:focus-visible{outline:2px solid var(--teal-bright); outline-offset:2px; border-radius:2px}
+
+.wrap{max-width:var(--spine); margin:0 auto; padding:0 clamp(1.1rem,4vw,3rem)}
+.prose{max-width:65ch}
+section{padding:clamp(3rem,6vw,5.5rem) 0; border-top:1px solid var(--line-soft)}
+section:first-of-type{border-top:0}
+
+/* eyebrow encodes the document number in the corpus */
+.eyebrow{font-family:var(--mono); font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-3); display:flex; gap:.6rem; align-items:baseline; margin-bottom:.9rem}
+.eyebrow b{color:var(--teal); font-weight:600}
+h2.sec{font-size:clamp(1.6rem,3.4vw,2.35rem); margin-bottom:.75rem}
+.lede{font-size:1.08rem; color:var(--ink-2); max-width:60ch}
+
+/* ---------- hero ---------- */
+.hero{position:relative; overflow:hidden; border-bottom:1px solid var(--line)}
+.hero-bg{position:absolute; inset:0; z-index:0; opacity:.5; pointer-events:none}
+.hero .wrap{position:relative; z-index:1; padding-top:clamp(2.5rem,6vw,4.5rem); padding-bottom:clamp(2.5rem,5vw,3.5rem)}
+.brandline{display:flex; align-items:baseline; gap:.9rem; flex-wrap:wrap; margin-bottom:1.6rem}
+.brand{font-family:var(--display); font-weight:800; font-size:clamp(2.4rem,7vw,4.4rem); letter-spacing:-.02em; line-height:1}
+.brandmeta{font-family:var(--mono); font-size:.74rem; letter-spacing:.13em; text-transform:uppercase; color:var(--ink-3); border-left:2px solid var(--teal); padding-left:.7rem}
+.thesis{font-size:clamp(1.15rem,2.2vw,1.42rem); line-height:1.5; max-width:56ch; color:var(--ink)}
+.thesis em{font-style:normal; background:linear-gradient(transparent 62%, color-mix(in srgb, var(--teal) 26%, transparent) 62%)}
+.figs{display:grid; grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr)); gap:0; margin-top:2.6rem; border-top:1px solid var(--line); border-left:1px solid var(--line)}
+.fig{border-right:1px solid var(--line); border-bottom:1px solid var(--line); padding:1rem 1.1rem; background:color-mix(in srgb, var(--surface) 62%, transparent)}
+.fig b{display:block; font-family:var(--display); font-weight:800; font-size:2rem; letter-spacing:-.02em; font-variant-numeric:tabular-nums; line-height:1}
+.fig span{font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); display:block; margin-top:.4rem}
+
+/* ---------- generic blocks ---------- */
+.grid{display:grid; gap:1px; background:var(--line-soft); border:1px solid var(--line-soft)}
+.cell{background:var(--surface); padding:1.15rem 1.25rem}
+.g2{grid-template-columns:repeat(auto-fit,minmax(19rem,1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(15rem,1fr))}
+.cell h4{font-size:1rem; margin-bottom:.35rem; display:flex; gap:.55rem; align-items:baseline}
+.cell p{font-size:.93rem; color:var(--ink-2)}
+.code{font-family:var(--mono); font-size:.7rem; font-weight:600; letter-spacing:.06em; color:var(--teal); border:1px solid color-mix(in srgb,var(--teal) 40%, transparent); padding:.08rem .34rem; border-radius:2px; white-space:nowrap}
+
+.stack{display:flex; flex-direction:column; gap:1.6rem}
+.row{display:flex; gap:1.6rem; flex-wrap:wrap}
+
+/* ---------- autonomy ladder ---------- */
+.ladder{display:grid; grid-template-columns:auto 1fr; gap:0 1.1rem; margin-top:1.8rem}
+.rung{display:contents}
+.rung-key{font-family:var(--mono); font-weight:600; font-size:.95rem; padding:.85rem 0 .85rem 0; display:flex; align-items:center; gap:.6rem; border-top:1px solid var(--line-soft)}
+.rung-key .dot{width:.62rem; height:.62rem; border-radius:50%; flex:none}
+.rung-body{padding:.85rem 0; border-top:1px solid var(--line-soft); display:grid; grid-template-columns:minmax(8rem,14rem) 1fr; gap:.2rem 1.2rem; align-items:baseline}
+.rung-body strong{font-family:var(--display); font-weight:600; font-size:1rem}
+.rung-body span{font-size:.9rem; color:var(--ink-2)}
+.gate{margin-top:1.7rem; border-left:3px solid var(--amber); background:var(--surface-2); padding:1rem 1.2rem}
+.gate h4{font-size:.95rem; margin-bottom:.4rem}
+.gate p{font-size:.92rem; color:var(--ink-2)}
+
+/* ---------- explorer ---------- */
+.controls{display:flex; gap:.6rem; flex-wrap:wrap; align-items:center; margin:1.6rem 0 1.1rem}
+.controls label{font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3)}
+select,.chipbtn{font-family:var(--mono); font-size:.78rem; background:var(--surface); color:var(--ink); border:1px solid var(--line); padding:.4rem .6rem; border-radius:3px; cursor:pointer}
+.chipbtn[aria-pressed="true"]{background:var(--teal); color:var(--surface); border-color:var(--teal)}
+:root[data-theme="dark"] .chipbtn[aria-pressed="true"], :root:not([data-theme="light"]) .chipbtn[aria-pressed="true"]{color:#06110F}
+.count{font-family:var(--mono); font-size:.78rem; color:var(--ink-3); margin-left:auto}
+
+.uc-list{display:grid; gap:1px; background:var(--line-soft); border:1px solid var(--line-soft)}
+.uc{background:var(--surface); padding:1.05rem 1.2rem; display:grid; grid-template-columns:5.2rem 1fr; gap:.15rem 1.1rem; align-items:start}
+.uc-id{font-family:var(--mono); font-size:.82rem; font-weight:600; color:var(--ink-3); padding-top:.1rem}
+.uc-head{display:flex; gap:.6rem; align-items:baseline; flex-wrap:wrap}
+.uc-head h4{font-size:1.03rem}
+.uc-pain{grid-column:2; font-size:.93rem; color:var(--ink-2); margin-top:.3rem}
+.uc-flow{grid-column:2; margin-top:.6rem; font-family:var(--mono); font-size:.74rem; color:var(--ink-3); display:flex; flex-wrap:wrap; gap:.3rem .1rem; align-items:center}
+.uc-flow i{font-style:normal; color:var(--teal); padding:0 .35rem}
+.uc-meta{grid-column:2; margin-top:.65rem; display:flex; gap:.4rem; flex-wrap:wrap}
+.tag{font-family:var(--mono); font-size:.68rem; letter-spacing:.05em; padding:.14rem .42rem; border-radius:2px; border:1px solid var(--line); color:var(--ink-2); white-space:nowrap}
+.tag.lv{border-color:currentColor}
+.tag.arch{background:var(--sunken)}
+
+/* ---------- tables ---------- */
+.tablewrap{overflow-x:auto; border:1px solid var(--line-soft); margin-top:1.6rem}
+table{border-collapse:collapse; width:100%; min-width:38rem; background:var(--surface)}
+th,td{text-align:left; padding:.62rem .9rem; border-bottom:1px solid var(--line-soft); font-size:.9rem; vertical-align:top}
+th{font-family:var(--mono); font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); font-weight:500; background:var(--surface-2); position:sticky; top:0}
+tbody tr:last-child td{border-bottom:0}
+td.num{font-variant-numeric:tabular-nums; font-family:var(--mono); font-size:.85rem}
+td.name{font-family:var(--display); font-weight:600}
+
+/* ---------- diagram ---------- */
+.diagram{margin-top:1.8rem; border:1px solid var(--line-soft); background:var(--surface); padding:1.2rem; overflow-x:auto}
+.diagram svg{display:block; min-width:44rem; width:100%; height:auto}
+.svc{font-family:var(--mono); font-size:9.5px; fill:var(--ink-2)}
+.plane-label{font-family:var(--display); font-weight:600; font-size:11px; letter-spacing:.06em}
+.node-label{font-family:var(--display); font-weight:600; font-size:11px; fill:var(--ink)}
+.edge-label{font-family:var(--mono); font-size:8.5px; fill:var(--ink-3)}
+
+/* ---------- econ ---------- */
+.bars{display:grid; gap:.75rem; margin-top:1.5rem}
+.bar{display:grid; grid-template-columns:minmax(9rem,12rem) 1fr auto; gap:.9rem; align-items:center}
+.bar span{font-size:.9rem; color:var(--ink-2)}
+.track{height:.78rem; background:var(--sunken); position:relative; border-radius:1px; overflow:hidden}
+.fill{height:100%; border-radius:1px}
+.bar b{font-family:var(--mono); font-size:.82rem; font-variant-numeric:tabular-nums; font-weight:500}
+
+.callout{border:1px solid var(--line); border-left:3px solid var(--teal); background:var(--surface); padding:1.1rem 1.25rem; margin-top:1.6rem}
+.callout p{font-size:.96rem; color:var(--ink-2)}
+.callout strong{color:var(--ink)}
+
+/* ---------- doc index ---------- */
+.docs{display:grid; grid-template-columns:repeat(auto-fit,minmax(17rem,1fr)); gap:1px; background:var(--line-soft); border:1px solid var(--line-soft); margin-top:1.6rem}
+.doccol{background:var(--surface); padding:1.1rem 1.2rem}
+.doccol h4{font-size:.82rem; font-family:var(--mono); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); font-weight:500; margin-bottom:.7rem}
+.doccol ul{list-style:none; margin:0; padding:0; display:grid; gap:.42rem}
+.doccol li{font-size:.9rem; display:grid; grid-template-columns:2.6rem 1fr; gap:.6rem}
+.doccol code{font-family:var(--mono); font-size:.74rem; color:var(--ink-3)}
+
+footer{border-top:1px solid var(--line); padding:2.2rem 0 3rem; color:var(--ink-3); font-size:.86rem}
+footer .wrap{display:flex; justify-content:space-between; gap:1.5rem; flex-wrap:wrap; align-items:baseline}
+.themebtn{position:fixed; right:1rem; top:1rem; z-index:20}
+
+@media (max-width:640px){
+  .uc{grid-template-columns:1fr}
+  .uc-pain,.uc-flow,.uc-meta{grid-column:1}
+  .rung{display:block}
+  .rung-body{grid-template-columns:1fr; padding-top:.2rem; border-top:0}
+  .rung-key{border-bottom:0}
+  .bar{grid-template-columns:1fr; gap:.25rem}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
+
+<button class="chipbtn themebtn" id="themebtn" aria-pressed="false">theme</button>
+
+<header class="hero">
+  <svg class="hero-bg" viewBox="0 0 1200 340" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="wind" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0%" stop-color="var(--teal)" stop-opacity="0"/>
+        <stop offset="45%" stop-color="var(--teal)" stop-opacity=".55"/>
+        <stop offset="100%" stop-color="var(--teal)" stop-opacity="0"/>
+      </linearGradient>
+    </defs>
+    <g fill="none" stroke="url(#wind)" stroke-width="1.1">
+      <path d="M-40 60 C 260 20, 500 100, 1240 44"/>
+      <path d="M-40 96 C 300 56, 620 132, 1240 74"/>
+      <path d="M-40 138 C 240 104, 700 172, 1240 118"/>
+      <path d="M-40 186 C 340 150, 640 214, 1240 160"/>
+      <path d="M-40 232 C 280 200, 720 256, 1240 210"/>
+      <path d="M-40 282 C 320 250, 600 300, 1240 258"/>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div class="brandline">
+      <span class="brand">Habagat</span>
+      <span class="brandmeta">Agent&nbsp;as&nbsp;a&nbsp;Service<br>Research &amp; build plan · 2026</span>
+    </div>
+    <p class="thesis">The hard part of enterprise AI was never the model. It is <em>operating agents safely inside a regulated business.</em> Habagat builds vertical agents for specific workflows and runs them as a service inside each customer's own isolated Azure tenant.</p>
+    <div class="figs">
+      <div class="fig"><b>284</b><span>workflows catalogued</span></div>
+      <div class="fig"><b>20</b><span>industries</span></div>
+      <div class="fig"><b>8</b><span>reusable archetypes</span></div>
+      <div class="fig"><b>1:1</b><span>tenant per customer</span></div>
+      <div class="fig"><b>30</b><span>planning documents</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<section id="thesis">
+  <div class="wrap">
+    <div class="eyebrow"><b>Doc 41</b><span>The thesis</span></div>
+    <h2 class="sec">Four reasons agents stall before production — all of them operating problems</h2>
+    <p class="lede">Enterprises have not been short of AI enthusiasm. They have been short of AI in production. The reasons repeat across every enterprise in this study, and none of them is a modelling problem.</p>
+    <div class="grid g4" style="margin-top:1.8rem">
+      <div class="cell"><h4>Nobody can prove it's right</h4><p>No evaluation corpus, so no basis for trusting an agent to act unattended. Confidence is asserted, not measured.</p></div>
+      <div class="cell"><h4>Nobody will accept the data risk</h4><p>Multi-tenant AI vendors fail the security review in banking, healthcare and government — often before the demo.</p></div>
+      <div class="cell"><h4>Nobody owns the operation</h4><p>A pilot ships. Then it needs monitoring, improvement, incident response and governance. No one is resourced for it.</p></div>
+      <div class="cell"><h4>Regulation arrived first</h4><p>The EU AI Act and sector rules demand documentation and oversight a demonstration cannot satisfy.</p></div>
+    </div>
+    <div class="callout">
+      <p><strong>The answer to “isn't this just a wrapper?”</strong> A wrapper calls a model. Habagat computes an authorisation envelope <em>before</em> the model sees untrusted content, enforces deterministic rules the model cannot override, compensates partial multi-system writes, produces a regulator-grade trace of every action, and gates every autonomy increase on a versioned evaluation corpus. Swap the model out — the provider-neutral spec allows it — and the product still exists. That is the test.</p>
+    </div>
+  </div>
+</section>
+
+<section id="archetypes">
+  <div class="wrap">
+    <div class="eyebrow"><b>Doc 00</b><span>Agent taxonomy</span></div>
+    <h2 class="sec">Eight archetypes explain 284 workflows</h2>
+    <p class="lede">Every catalogued use case collapses into one of eight reusable engineering patterns. Habagat builds the archetype once and instantiates it per customer. This — not model access — is the margin structure.</p>
+    <div class="grid g4" style="margin-top:1.8rem" id="archgrid"></div>
+  </div>
+</section>
+
+<section id="autonomy">
+  <div class="wrap">
+    <div class="eyebrow"><b>Doc 00 · 33</b><span>Governance model</span></div>
+    <h2 class="sec">Autonomy is earned, never assumed</h2>
+    <p class="lede">Every agent ships at L1 or L2 and is promoted only on evidence. The level an agent operates at — paired with its blast radius — determines its engineering cost, its governance regime and its gross margin.</p>
+    <div class="ladder" id="ladder"></div>
+    <div class="gate">
+      <h4>The promotion gate from L2 → L3</h4>
+      <p>Evaluation threshold met <em>on the customer's own data</em> · ≥14 days shadow operation with disagreements analysed individually · false-action rate below SLO at a lower confidence bound · escalations shown to be genuinely necessary · every automated write has a <em>tested</em> compensating action · review-queue capacity confirmed · the customer's AI Council decision documented with a named owner · a rollback to L2 rehearsed and timed at under one hour. <strong>Demotion on breach is automatic and requires no meeting.</strong></p>
+    </div>
+  </div>
+</section>
+
+<section id="explorer">
+  <div class="wrap">
+    <div class="eyebrow"><b>Doc 01</b><span>The horizontal product line</span></div>
+    <h2 class="sec">Twenty agents that apply to every company</h2>
+    <p class="lede">These workflows exist in a bank, a hospital, a mine and a media company alike. They are the fastest land, the highest reuse and the best gross margin — and the portfolio effect matters more than any single agent.</p>
+    <div class="controls">
+      <label for="fArch">Archetype</label>
+      <select id="fArch"><option value="">All eight</option></select>
+      <label for="fAut">Autonomy</label>
+      <select id="fAut"><option value="">Any level</option><option>L1</option><option>L2</option><option>L3</option></select>
+      <label for="fVs">Value stream</label>
+      <select id="fVs"><option value="">Any stream</option></select>
+      <span class="count" id="ucCount"></span>
+    </div>
+    <div class="uc-list" id="ucList"></div>
+  </div>
+</section>
+
+<section id="industries">
+  <div class="wrap">
+    <div class="eyebrow"><b>Docs 02–21</b><span>Vertical depth</span></div>
+    <h2 class="sec">Twenty industries, 264 sector-specific agents</h2>
+    <p class="lede">The vertical line carries higher price and higher defensibility, and it is slower to build. Each industry document names the entry points that move the buyer's own P&amp;L metric — and the regulatory boundary that caps autonomy.</p>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Industry</th><th class="num">Cases</th><th>Highest-value entry points</th><th>The binding constraint</th></tr></thead>
+        <tbody id="indBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="architecture">
+  <div class="wrap">
+    <div class="eyebrow"><b>Doc 30</b><span>Reference architecture</span></div>
+    <h2 class="sec">Two planes, and a boundary that is continuously tested</h2>
+    <p class="lede">A single Habagat control plane provisions, versions, observes and bills. N fully isolated customer data planes execute. Customer content never enters the control plane — and a scheduled canary plants unique markers in tenant data and searches the control plane for them. Any hit is a P1 incident.</p>
+    <div class="diagram">
+      <svg viewBox="0 0 900 330" role="img" aria-label="Habagat two-plane architecture: a control plane containing blueprint registry, fleet manager, provisioning, evaluation, metering and observability; and isolated customer data planes each containing the agent harness, an Azure AI Foundry project, grounding, tool gateway and human review.">
+        <rect x="8" y="8" width="884" height="118" fill="var(--surface-2)" stroke="var(--indigo)" stroke-width="1"/>
+        <text x="20" y="27" class="plane-label" fill="var(--indigo)">HABAGAT CONTROL PLANE — Habagat tenant · holds zero customer content</text>
+        <g>
+          <rect x="20" y="40" width="136" height="70" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="30" y="60" class="node-label">Blueprint Registry</text>
+          <text x="30" y="76" class="svc">versioned specs</text><text x="30" y="89" class="svc">prompts · tools</text><text x="30" y="102" class="svc">eval corpora</text>
+
+          <rect x="168" y="40" width="136" height="70" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="178" y="60" class="node-label">Fleet Manager</text>
+          <text x="178" y="76" class="svc">tenant inventory</text><text x="178" y="89" class="svc">ring rollout R0→R3</text><text x="178" y="102" class="svc">drift detection</text>
+
+          <rect x="316" y="40" width="136" height="70" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="326" y="60" class="node-label">Provisioning</text>
+          <text x="326" y="76" class="svc">Terraform modules</text><text x="326" y="89" class="svc">landing zone</text><text x="326" y="102" class="svc">policy baseline</text>
+
+          <rect x="464" y="40" width="136" height="70" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="474" y="60" class="node-label">Evaluation</text>
+          <text x="474" y="76" class="svc">graders · gates</text><text x="474" y="89" class="svc">regression detect</text><text x="474" y="102" class="svc">model migration</text>
+
+          <rect x="612" y="40" width="136" height="70" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="622" y="60" class="node-label">Fleet Telemetry</text>
+          <text x="622" y="76" class="svc">metrics only</text><text x="622" y="89" class="svc">allowlisted fields</text><text x="622" y="102" class="svc">no payloads</text>
+
+          <rect x="760" y="40" width="120" height="70" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="770" y="60" class="node-label">Metering</text>
+          <text x="770" y="76" class="svc">agent-run</text><text x="770" y="89" class="svc">counters</text><text x="770" y="102" class="svc">billing</text>
+        </g>
+
+        <line x1="8" y1="150" x2="892" y2="150" stroke="var(--coral)" stroke-width="1.4" stroke-dasharray="5 4"/>
+        <text x="20" y="145" class="edge-label" fill="var(--coral)">ISOLATION BOUNDARY · signed spec bundles down · allowlisted metrics up · customer content never crosses</text>
+
+        <g>
+          <rect x="8" y="168" width="430" height="152" fill="var(--surface-2)" stroke="var(--teal)"/>
+          <text x="20" y="187" class="plane-label" fill="var(--teal)">CUSTOMER A DATA PLANE — their Azure tenant, their region</text>
+          <rect x="20" y="198" width="196" height="52" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="30" y="216" class="node-label">Habagat Harness</text>
+          <text x="30" y="231" class="svc">policy envelope · verifier</text><text x="30" y="243" class="svc">tool gateway · compensation</text>
+          <rect x="228" y="198" width="198" height="52" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="238" y="216" class="node-label">Azure AI Foundry</text>
+          <text x="238" y="231" class="svc">agent service · models</text><text x="238" y="243" class="svc">content safety · evals</text>
+          <rect x="20" y="258" width="128" height="50" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="30" y="276" class="node-label">Grounding</text>
+          <text x="30" y="291" class="svc">AI Search · ACL</text><text x="30" y="302" class="svc">Blob · Cosmos</text>
+          <rect x="160" y="258" width="128" height="50" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="170" y="276" class="node-label">Tool Gateway</text>
+          <text x="170" y="291" class="svc">ERP · CRM · ITSM</text><text x="170" y="302" class="svc">private endpoints</text>
+          <rect x="300" y="258" width="126" height="50" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="310" y="276" class="node-label">Human gate</text>
+          <text x="310" y="291" class="svc">Teams approvals</text><text x="310" y="302" class="svc">review queue</text>
+        </g>
+
+        <g>
+          <rect x="452" y="168" width="200" height="152" fill="var(--surface-2)" stroke="var(--teal)" stroke-opacity=".6"/>
+          <text x="464" y="187" class="plane-label" fill="var(--teal)">CUSTOMER B</text>
+          <rect x="464" y="198" width="176" height="42" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="474" y="215" class="node-label">Harness</text><text x="474" y="231" class="svc">same blueprint, own tenant</text>
+          <rect x="464" y="248" width="176" height="30" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="474" y="267" class="node-label">Foundry project</text>
+          <rect x="464" y="286" width="176" height="26" fill="var(--surface)" stroke="var(--line)"/>
+          <text x="474" y="303" class="node-label">Grounding · Tools</text>
+        </g>
+
+        <g>
+          <rect x="666" y="168" width="226" height="152" fill="var(--surface)" stroke="var(--line)" stroke-dasharray="3 3"/>
+          <text x="678" y="187" class="plane-label" fill="var(--ink-3)">CUSTOMERS C … N</text>
+          <text x="678" y="209" class="svc">One subscription each. No shared index,</text>
+          <text x="678" y="223" class="svc">no shared model deployment holding</text>
+          <text x="678" y="237" class="svc">customer context, no tenant_id column.</text>
+          <text x="678" y="262" class="svc" fill="var(--teal)">Agents keep running if the control</text>
+          <text x="678" y="276" class="svc" fill="var(--teal)">plane — or Habagat — goes down.</text>
+          <text x="678" y="300" class="svc">Zero-snowflake rule: tenants hold</text>
+          <text x="678" y="313" class="svc">configuration, never prompts or code.</text>
+        </g>
+      </svg>
+    </div>
+    <div class="grid g2" style="margin-top:1.6rem">
+      <div class="cell"><h4>What isolation costs</h4><p>A fixed floor of roughly <b style="font-family:var(--mono);font-size:.95rem">$1,100–2,200</b> per tenant per month before a single token is spent, and N deployments to operate rather than one. This is stated openly in the pricing model rather than discovered later.</p></div>
+      <div class="cell"><h4>What isolation buys</h4><p>The ability to sell to a bank, a hospital and a government in the same quarter. Data residency by construction. A breach blast radius of one customer. And a genuine exit — it is their tenant.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="economics">
+  <div class="wrap">
+    <div class="eyebrow"><b>Docs 40 · CTO 04</b><span>Unit economics</span></div>
+    <h2 class="sec">The margin lever is autonomy, not tokens</h2>
+    <p class="lede">In the worked cost model, inference is a minority of COGS and human review is the largest single line. That single fact should shape the roadmap, the delivery incentives and the investor narrative — and it makes the operating metric unusually clear.</p>
+    <div class="bars" id="cogs"></div>
+    <div class="callout">
+      <p><strong>Year-one gross margin on a new customer is about 48%.</strong> It reaches 65–72% as agents are promoted from L2 to L3 and review load falls away. So the number the company is managed by — and the number a board should hold it to — is the <strong>L3 promotion rate across the fleet</strong>. If autonomy stalls at L2, Habagat is a well-run services business rather than a software company. Every roadmap decision is therefore biased toward producing the evidence that unlocks L3.</p>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Agent archetype tier</th><th>Example</th><th class="num">Cost / run</th><th class="num">Price / run</th><th class="num">Gross margin</th></tr></thead>
+        <tbody>
+          <tr><td class="name">High-volume, low-complexity</td><td>Ticket triage · document classification</td><td class="num">$0.012</td><td class="num">$0.06</td><td class="num">~80%</td></tr>
+          <tr><td class="name">Mid</td><td>Invoice processing · KYC refresh</td><td class="num">$0.09</td><td class="num">$0.45</td><td class="num">~80%</td></tr>
+          <tr><td class="name">Low-volume, high-complexity</td><td>Credit memo · contract review</td><td class="num">$2.40</td><td class="num">$12.00</td><td class="num">~80%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="font-family:var(--mono);font-size:.72rem;color:var(--ink-3);margin-top:.7rem">Illustrative figures with the arithmetic shown in Docs 32 §7, 40 §4 and CTO 04 §4 — substitute your own rates.</p>
+  </div>
+</section>
+
+<section id="moat">
+  <div class="wrap">
+    <div class="eyebrow"><b>Doc 36 · 41</b><span>Defensibility</span></div>
+    <h2 class="sec">Four assets, none of them the model</h2>
+    <div class="grid g2" style="margin-top:1.8rem">
+      <div class="cell"><h4>The Evaluation Corpus <span class="code">the moat</span></h4><p>Graded cases per blueprint across five bands — happy path, common variation, edge, adversarial, and <em>should-escalate</em>. Grown from human corrections and production incidents across every customer. It cannot be bought or synthesised: it requires production deployments across many enterprises over time. The corpus for blueprint one costs five person-weeks; for customer twelve of that blueprint, three days.</p></div>
+      <div class="cell"><h4>Vertical Blueprints</h4><p>284 workflows mapped to eight archetypes, with domain grounding, KPIs and regulatory constraints encoded. Requires domain expertise <em>plus</em> deployment experience — the combination a generalist platform does not accumulate.</p></div>
+      <div class="cell"><h4>The Isolation Fabric</h4><p>The automation that provisions and operates hundreds of independent tenants without them becoming snowflakes: declarative specs, drift detection, ring rollout, signed bundles that fail to load if modified. Unglamorous, and the reason single-tenant can be sold profitably.</p></div>
+      <div class="cell"><h4>The Trust Layer</h4><p>Policy envelopes computed before untrusted content is read, deterministic verification, compensating actions, audit-grade tracing, automatic model cards. The part regulated buyers require and most vendors have not built — and the part that gets a vendor past second-line risk review.</p></div>
+    </div>
+    <div class="callout">
+      <p><strong>Why the should-escalate band matters most.</strong> Roughly a tenth of every evaluation corpus consists of cases where the correct behaviour is <em>not to act</em>. It measures whether the agent knows its own limits — the property the entire autonomy model rests on. Ranked by importance the metrics run: escalation recall, then hard-rule adherence, then calibration, then task success. Most teams reverse that order, which is why their agents demo well and fail in production.</p>
+    </div>
+  </div>
+</section>
+
+<section id="risks">
+  <div class="wrap">
+    <div class="eyebrow"><b>Doc 41 §9</b><span>Raised by us, not by diligence</span></div>
+    <h2 class="sec">What would have to go wrong</h2>
+    <div class="tablewrap">
+      <table>
+        <thead><tr><th>Risk</th><th>Severity</th><th>Position</th></tr></thead>
+        <tbody>
+          <tr><td class="name">Autonomy stalls at L2</td><td><span class="tag" style="color:var(--coral)">Critical</span></td><td>The central risk to the margin thesis. Why evaluation is funded before sales, and why the L3 promotion rate is reported every board meeting.</td></tr>
+          <tr><td class="name">Fleet entropy — tenants become snowflakes</td><td><span class="tag" style="color:var(--coral)">Critical</span></td><td>Enforced against from customer one by the zero-snowflake rule in CI. Cheap to prevent; effectively impossible to reverse.</td></tr>
+          <tr><td class="name">Microsoft builds this</td><td><span class="tag" style="color:var(--amber)">High</span></td><td>They build platforms; we build vertical depth, evaluation corpora and operations. We grow their consumption, which makes us worth more as a partner than as a target. Accepted consciously.</td></tr>
+          <tr><td class="name">The single-tenant cost floor</td><td><span class="tag" style="color:var(--amber)">High</span></td><td>Structural. Managed by a platform fee that covers the floor and by qualification discipline — we do not sell below it.</td></tr>
+          <tr><td class="name">An agent causes material customer harm</td><td><span class="tag" style="color:var(--amber)">High</span></td><td>Contained by blast-radius design, human gates and compensating actions; managed by insurance and liability caps. Reduced, never eliminated.</td></tr>
+          <tr><td class="name">Concentration on Azure</td><td><span class="tag" style="color:var(--indigo)">Medium</span></td><td>Deliberate. The hedge sits at the specification layer and is tested quarterly, making a provider change a quarter of work rather than a rebuild.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section id="corpus">
+  <div class="wrap">
+    <div class="eyebrow"><b>Index</b><span>The full corpus</span></div>
+    <h2 class="sec">Thirty documents behind this page</h2>
+    <p class="lede">Every claim on this page traces to a document in the repository at <code style="font-family:var(--mono);font-size:.85rem">docs/habagat/</code>.</p>
+    <div class="docs">
+      <div class="doccol">
+        <h4>Research</h4>
+        <ul>
+          <li><code>00</code><span>Method, taxonomy &amp; notation</span></li>
+          <li><code>01</code><span>20 cross-industry use cases</span></li>
+          <li><code>02–21</code><span>20 industries · 264 use cases</span></li>
+        </ul>
+      </div>
+      <div class="doccol">
+        <h4>Platform</h4>
+        <ul>
+          <li><code>30</code><span>Reference architecture</span></li>
+          <li><code>31</code><span>The Habagat harness</span></li>
+          <li><code>32</code><span>Per-tenant Azure landing zone</span></li>
+          <li><code>33</code><span>Governance &amp; fleet management</span></li>
+          <li><code>34</code><span>Security &amp; compliance</span></li>
+          <li><code>35</code><span>Azure services catalogue</span></li>
+          <li><code>36</code><span>Evaluation &amp; the trust layer</span></li>
+        </ul>
+      </div>
+      <div class="doccol">
+        <h4>CTO strategy</h4>
+        <ul>
+          <li><code>01</code><span>Three-year technical strategy</span></li>
+          <li><code>02</code><span>Engineering org &amp; operating model</span></li>
+          <li><code>03</code><span>Platform engineering &amp; SDLC</span></li>
+          <li><code>04</code><span>Model strategy &amp; economics</span></li>
+          <li><code>05</code><span>Technical due diligence pack</span></li>
+          <li><code>06</code><span>Roadmap &amp; scaling milestones</span></li>
+        </ul>
+      </div>
+      <div class="doccol">
+        <h4>Business &amp; next</h4>
+        <ul>
+          <li><code>40</code><span>Business model &amp; go-to-market</span></li>
+          <li><code>41</code><span>Investor narrative</span></li>
+          <li><code>50</code><span>Software Architect Agent prompt</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>Habagat — the southwest monsoon. A prevailing wind, not a gust.</span>
+    <span style="font-family:var(--mono);font-size:.74rem">All figures illustrative · arithmetic shown in source documents</span>
+  </div>
+</footer>
+
+<script>
+const ARCH=[
+ ["A1","Intake &amp; Triage","Classify → enrich → route → acknowledge","L3","Support triage · claims FNOL · referral intake"],
+ ["A2","Document Intelligence","Ingest → extract → validate → post to system of record","L3","Invoices · KYC docs · contracts · customs entries"],
+ ["A3","Research &amp; Synthesis","Decompose → retrieve → synthesise → cite","L2","Market research · credit memos · due diligence"],
+ ["A4","Advisor / Copilot","Context → retrieve policy &amp; data → recommend → explain","L1–L2","Clinical documentation · underwriting · field tech"],
+ ["A5","Transaction &amp; Fulfilment","Validate → orchestrate multi-system writes → confirm","L2–L3","Order changes · provisioning · dispatch · onboarding"],
+ ["A6","Monitoring &amp; Anomaly","Watch → detect → diagnose → act or escalate","L3–L4","Fraud · predictive maintenance · margin leakage"],
+ ["A7","Negotiation &amp; Outbound","Plan → engage → adapt → close or escalate","L1–L2","Collections · supplier negotiation · retention"],
+ ["A8","Compliance &amp; Assurance","Gather evidence → test control → report → remediate","L2–L3","Audit prep · regulatory reporting · vendor risk"]
+];
+document.getElementById('archgrid').innerHTML=ARCH.map(a=>
+ `<div class="cell"><h4><span class="code">${a[0]}</span> ${a[1]}</h4><p>${a[2]}</p><p style="margin-top:.5rem;font-size:.85rem;color:var(--ink-3)"><span class="tag lv" style="color:var(--l2)">typically ${a[3]}</span></p><p style="margin-top:.5rem;font-size:.85rem">${a[4]}</p></div>`).join('');
+
+const LADDER=[
+ ["L0","Assistive","Human does the work; the agent answers questions","Informational only","--l0"],
+ ["L1","Draft","Agent drafts; a human edits and submits","Eval pass ≥ 80% on helpfulness","--l1"],
+ ["L2","Recommend + approve","Agent proposes a specific action; a human approves it in one click","Eval ≥ 90%; approval rate tracked","--l2"],
+ ["L3","Act with exception escalation","Agent executes inside a policy envelope and escapes to a human on low confidence or out-of-policy","Eval ≥ 95%; false-action rate under SLO; reversible actions only","--l3"],
+ ["L4","Act autonomously, audited after","Agent acts; humans sample-audit","Eval ≥ 98%; 90 sustained days at L3; formal board-level risk sign-off","--l4"]
+];
+document.getElementById('ladder').innerHTML=LADDER.map(r=>
+ `<div class="rung-key" style="color:var(--${r[4].slice(2)})"><span class="dot" style="background:currentColor"></span>${r[0]}</div>
+  <div class="rung-body"><strong>${r[1]}</strong><span>${r[2]}</span><span style="grid-column:2;font-family:var(--mono);font-size:.76rem;color:var(--ink-3);margin-top:.2rem">SHIPS WHEN — ${r[3]}</span></div>`).join('');
+
+const UC=[
+ ["X01","Enterprise Knowledge &amp; Policy Answering","A3","L2","B1","Issue-to-resolution","3 wks","Employees lose 4–6 hours a week hunting for policy across SharePoint, Confluence and tribal knowledge — and the inconsistency itself creates compliance exposure.",["Teams question","Entitlement-scoped retrieval","Recency &amp; authority check","Cited answer","Knowledge-gap backlog"]],
+ ["X02","Invoice &amp; Accounts-Payable Processing","A2","L3","B3","Procure-to-pay","6 wks","$6–15 fully loaded per invoice; exception handling consumes 60% of the AP team; early-payment discounts routinely missed.",["Invoice arrives","Extract + confidence","Arithmetic &amp; duplicate checks","Three-way match","Post to ERP","Payment release stays human"]],
+ ["X03","Contract Review &amp; Obligation Extraction","A2","L2","B2","Risk-to-assurance","8 wks","Post-signature, the obligations just accepted are buried in PDFs nobody re-reads, so renewal and audit rights silently expire.",["Contract received","Clause mapping","Playbook deviation analysis","Tracked redlines","Live obligation register"]],
+ ["X04","Procurement Sourcing &amp; Supplier Evaluation","A3","L2","B2","Procure-to-pay","8 wks","Sourcing takes 8–14 weeks; maverick spend continues because the compliant path is slower than the non-compliant one.",["Requisition over threshold","Existing framework check","RFQ pack","Bid normalisation to TCO","Award recommendation"]],
+ ["X05","Customer Support Triage &amp; Resolution","A1","L3","B3","Issue-to-resolution","5 wks","Handle time is dominated by context assembly, not problem solving; backlogs spike unpredictably.",["Inbound contact","Multi-intent split","Context assembly","Resolve in policy envelope","Escalate pre-worked"]],
+ ["X06","Sales Lead Research, Scoring &amp; Outreach","A7","L2","B3","Demand creation","4 wks","SDRs spend ~70% of their time researching and writing. Generic sequences burn domain reputation for low reply rates.",["Lead or trigger event","Enrichment &amp; ICP fit","Consent check","Personalised first touch","Meeting booked, AE briefed"]],
+ ["X07","RFP &amp; Proposal Response Generation","A3","L1","B2","Demand creation","5 wks","200-question spreadsheets on 10-day deadlines pull SMEs off delivery to re-answer questions the company has answered forty times.",["RFP received","Disqualifier flagging","Answer-library retrieval","Consistency pass","Compliance matrix"]],
+ ["X08","Recruiting Screen &amp; Interview Scheduling","A1","L2","B3","Hire-to-retire","5 wks","Hundreds of CVs per role, four interviewers, three time zones — and screening consistency that is poor and legally exposed.",["Application received","Rubric scoring with evidence","Bias controls architectural","Recruiter shortlist","Panel scheduling"]],
+ ["X09","Employee Onboarding Orchestration","A5","L3","B2","Hire-to-retire","6 wks","Onboarding spans six functions coordinated by checklist and goodwill; access is copied from a colleague, which is how privilege creep starts.",["Hire created in HRIS","Entitlement pattern derived","Parallel provisioning","Dependency management","Day-one ready"]],
+ ["X10","IT Service Desk &amp; Access Management","A5","L3","B3","Issue-to-resolution","6 wks","Half of service-desk volume is resets and access requests; approvals are rubber-stamped and entitlements are never reviewed.",["Request raised","SoD evaluation","Data-owner approval","Time-bound provisioning","Usage-evidenced recertification"]],
+ ["X11","Financial Close &amp; Reconciliation","A8","L2","B4","Record-to-report","10 wks","Five to ten working days of accountants chasing balances — mechanical work until it suddenly isn't.",["Period end","Multi-pass matching","Exception investigated, not listed","Journal proposed with support","Human posts"]],
+ ["X12","FP&amp;A Variance Analysis &amp; Narrative","A3","L1","B1","Record-to-report","6 wks","Ten days rebuilding the same decks to say “revenue was below plan” without saying why. Insight arrives too late to act on.",["Close complete","Price/volume/mix/FX decomposition","Driver attribution","Cross-source corroboration","Narrative drafted"]],
+ ["X13","Collections &amp; Dunning","A7","L2","B3","Order-to-cash","6 wks","The same dunning letter goes to a strategic customer with a disputed invoice and to a serial late payer.",["Ageing bucket crossed","Root-cause classification","Segment-appropriate outreach","Promise-to-pay captured","Hardship stops automation"]],
+ ["X14","Data-Quality Steward","A6","L3","B2","All streams","6 wks","Master data rots continuously and every downstream analytic — and every agent — inherits the rot.",["Record created","Contract validation","Entity resolution","Safe auto-remediation","Defect-source report"]],
+ ["X15","Security Alert Triage (Tier-1 SOC)","A1","L3","B3","Risk-to-assurance","8 wks","Analysts drown in false positives; alert fatigue means real incidents are missed no matter how many tools are bought.",["SIEM alert","Identity &amp; device enrichment","Hypothesis-driven query","Reversible containment","Case file for Tier-2"]],
+ ["X16","Compliance Evidence &amp; Audit Preparation","A8","L2","B2","Risk-to-assurance","8 wks","Weeks of screenshot-gathering, and the same evidence collected repeatedly for SOC 2, ISO 27001 and customer reviews.",["Observation window opens","Multi-framework crosswalk","Automated evidence collection","Operating-effectiveness testing","Gaps with owners"]],
+ ["X17","Meeting Intelligence &amp; Commitment Tracking","A3","L2","B2","All streams","3 wks","Decisions evaporate; the same decision is re-litigated a month later because nobody can find what was agreed.",["Meeting ends","Decisions vs commitments extracted","Ambiguity flagged not invented","Actions created with owners","Decision register"]],
+ ["X18","Competitive &amp; Market Intelligence","A3","L1","B1","Idea-to-market","4 wks","Battlecards are wrong by the time they are updated; sales loses deals to positioning that changed three months ago.",["Monitoring sweep","Significance filtering","Inference labelled as inference","Pipeline impact analysis","Tiered briefings"]],
+ ["X19","Vendor Risk &amp; Third-Party Due Diligence","A8","L2","B2","Risk-to-assurance","7 wks","Assessments are annual and instantly stale; nobody re-reads a SOC 2 report, and fourth-party concentration is invisible.",["Onboarding request","Inherent-risk tiering","SOC 2 read for exceptions &amp; CUECs","Contract-control alignment","Continuous monitoring"]],
+ ["X20","Process Mining &amp; Automation Scout","A6","L1","B1","All streams","8 wks","Automation roadmaps are built from opinion and politics, so automation lands where someone lobbied rather than where value is.",["Event logs ingested","As-is process discovered","Conformance &amp; rework analysis","Agent-fit scoring","Quantified backlog"]]
+];
+const AUTC={L1:'--l1',L2:'--l2',L3:'--l3'};
+const fArch=document.getElementById('fArch'), fAut=document.getElementById('fAut'), fVs=document.getElementById('fVs');
+[...new Set(UC.map(u=>u[2]))].sort().forEach(a=>{const o=document.createElement('option');o.textContent=a+' — '+ARCH.find(x=>x[0]===a)[1].replace(/&amp;/g,'&');o.value=a;fArch.appendChild(o)});
+[...new Set(UC.map(u=>u[5]))].sort().forEach(v=>{const o=document.createElement('option');o.textContent=v;o.value=v;fVs.appendChild(o)});
+function render(){
+ const a=fArch.value,l=fAut.value,v=fVs.value;
+ const rows=UC.filter(u=>(!a||u[2]===a)&&(!l||u[3]===l)&&(!v||u[5]===v));
+ document.getElementById('ucCount').textContent=rows.length+' of 20 shown';
+ document.getElementById('ucList').innerHTML=rows.map(u=>`
+  <article class="uc">
+    <div class="uc-id">${u[0]}</div>
+    <div class="uc-head"><h4>${u[1]}</h4></div>
+    <p class="uc-pain">${u[6]}</p>
+    <div class="uc-flow">${u[8].map((s,i)=>(i?'<i>→</i>':'')+s).join('')}</div>
+    <div class="uc-meta">
+      <span class="tag arch">${u[2]} ${ARCH.find(x=>x[0]===u[2])[1]}</span>
+      <span class="tag lv" style="color:var(${AUTC[u[3]]||'--l0'})">${u[3]} autonomy</span>
+      <span class="tag">${u[4]} blast radius</span>
+      <span class="tag">${u[5]}</span>
+      <span class="tag">${u[7]} to value</span>
+    </div>
+  </article>`).join('') || '<div class="cell"><p>No use case matches that combination. Clear a filter.</p></div>';
+}
+[fArch,fAut,fVs].forEach(el=>el.addEventListener('change',render)); render();
+
+const IND=[
+ ["Banking &amp; Capital Markets",15,"Onboarding &amp; KYC · credit memo preparation · AML alert investigation","Credit decisioning is EU AI Act high-risk — permanently L2"],
+ ["Insurance",14,"FNOL &amp; claims triage · claims leakage · submission intake","Underwriting appetite and claims denial stay human"],
+ ["Healthcare Providers",15,"Prior authorisation · denial management &amp; appeals · patient access","Administrative only — never diagnosis or treatment decisions"],
+ ["Life Sciences &amp; Pharma",14,"Regulatory document authoring · trial feasibility · PV case processing","GxP validation and 21 CFR Part 11 audit trails per agent"],
+ ["Retail &amp; E-Commerce",14,"Product content enrichment · markdown optimisation · demand forecasting","Algorithmic pricing must preclude signalling or collusion"],
+ ["Manufacturing &amp; Industrial",14,"Engineer-to-order quoting · non-conformance &amp; 8D · aftermarket parts","Purdue model: agents never write to a control system"],
+ ["Energy &amp; Utilities",14,"Outage restoration · grid asset health · DER interconnection queue","Control engineers own all switching; NERC CIP boundary"],
+ ["Telecommunications",13,"Care &amp; billing · order fall-out recovery · network fault diagnosis","Emergency-call handling may never be degraded"],
+ ["Transportation &amp; Logistics",13,"Customs &amp; trade documentation · shipment exception recovery · freight audit","Licensed brokers attest declarations; sanctions screening blocks"],
+ ["Public Sector &amp; Government",14,"Benefits &amp; permit processing · case backlog triage · citizen navigation","Administrative law: an authorised officer decides, with reasons"],
+ ["Education",13,"Student services · admissions processing · research grant administration","Assessment and access are high-risk; emotion recognition prohibited"],
+ ["Professional Services",13,"Due diligence review · audit testing · proposal production","Client matter separation and ethical walls enforced technically"],
+ ["Real Estate &amp; Construction",13,"Variation &amp; claim administration · lease abstraction · delay analysis","Statutory payment notice deadlines; competent-person sign-off"],
+ ["Travel &amp; Hospitality",12,"Disruption management &amp; rebooking · guest service · revenue management","Passenger-rights entitlements computed and paid proactively"],
+ ["Media &amp; Entertainment",12,"Rights &amp; licensing · archive metadata enrichment · trust and safety","Provenance metadata by default; rights verified before exploitation"],
+ ["Agriculture &amp; Food",12,"Traceability &amp; recall scoping · supplier quality · processing yield","HACCP critical limits are absolute; recall decisions are human"],
+ ["Technology &amp; Software",13,"Support deflection · vulnerability management · revenue operations","Never produce individual developer performance measurement"],
+ ["Mining &amp; Natural Resources",12,"Fixed-plant reliability · tailings monitoring · fleet maintenance","Engineer of record owns geotechnical judgement; TARP is human"],
+ ["Automotive &amp; Mobility",12,"Warranty &amp; field quality · aftersales service · homologation","Entirely outside the vehicle safety path; recalls are human"],
+ ["Nonprofit &amp; Social Impact",12,"Grant writing &amp; funder reporting · beneficiary intake · donor engagement","Any safeguarding indicator routes to a human immediately"]
+];
+document.getElementById('indBody').innerHTML=IND.map(i=>
+ `<tr><td class="name">${i[0]}</td><td class="num">${i[1]}</td><td>${i[2]}</td><td style="color:var(--ink-3)">${i[3]}</td></tr>`).join('');
+
+const COGS=[["Human review operations",50,"--l3"],["Azure infrastructure (the isolation floor)",22,"--indigo"],["Model inference",18,"--teal"],["Support &amp; success allocation",10,"--l0"]];
+document.getElementById('cogs').innerHTML=COGS.map(c=>
+ `<div class="bar"><span>${c[0]}</span><div class="track"><div class="fill" style="width:${c[1]}%;background:var(${c[2].slice(0)})"></div></div><b>${c[1]}%</b></div>`).join('')
+ +`<p style="font-family:var(--mono);font-size:.72rem;color:var(--ink-3);margin-top:.5rem">Share of COGS for a mid-tier agent at 50,000 runs per month · illustrative, CTO Doc 04 §4</p>`;
+
+const btn=document.getElementById('themebtn');
+btn.addEventListener('click',()=>{
+ const dark=document.documentElement.getAttribute('data-theme')==='dark'
+  || (!document.documentElement.hasAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
+ document.documentElement.setAttribute('data-theme',dark?'light':'dark');
+ btn.setAttribute('aria-pressed',String(!dark));
+});
+</script>
