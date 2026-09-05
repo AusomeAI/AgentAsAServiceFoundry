@@ -1,0 +1,16 @@
+# Habagat Harness — Doc 51 §1.2's ONE per-tenant deployable, seven
+# internal modules (harness/*.py), never split into microservices.
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+COPY harness/ ./harness/
+COPY policy/ ./policy/
+COPY tools/ ./tools/
+COPY spec/ ./spec/
+COPY compiler/ ./compiler/
+COPY eval/ ./eval/
+COPY controlplane/shared/health.py ./controlplane/shared/health.py
+EXPOSE 8080
+HEALTHCHECK CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/healthz')"
+CMD ["python", "-m", "harness.health"]

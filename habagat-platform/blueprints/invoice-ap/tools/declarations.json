@@ -1,0 +1,110 @@
+[
+  {
+    "tool_id": "docintel.extract_invoice_fields",
+    "version": "1.0.0",
+    "risk_class": "R0",
+    "description": "Extracts structured fields from an invoice document via Azure AI Document Intelligence.",
+    "input_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["document_ref"],
+      "properties": { "document_ref": { "type": "string" } }
+    },
+    "output_schema": { "type": "object" },
+    "auth_mode": "managed_identity",
+    "rate_limit": { "calls_per_minute": 60, "burst": 10 },
+    "timeout_ms": 15000
+  },
+  {
+    "tool_id": "erp.lookup_po",
+    "version": "2.1.0",
+    "risk_class": "R0",
+    "description": "Retrieves a purchase order and its goods-receipt history from the ERP.",
+    "input_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["po_reference"],
+      "properties": { "po_reference": { "type": "string" } }
+    },
+    "output_schema": { "type": "object" },
+    "auth_mode": "service_principal",
+    "rate_limit": { "calls_per_minute": 60, "burst": 10 },
+    "timeout_ms": 15000
+  },
+  {
+    "tool_id": "erp.three_way_match",
+    "version": "2.1.0",
+    "risk_class": "R0",
+    "description": "Compares invoice, purchase order and goods receipt within configured tolerance.",
+    "input_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["invoice", "po_reference"],
+      "properties": { "invoice": { "type": "object" }, "po_reference": { "type": "string" } }
+    },
+    "output_schema": { "type": "object" },
+    "auth_mode": "service_principal",
+    "rate_limit": { "calls_per_minute": 30, "burst": 5 },
+    "timeout_ms": 15000
+  },
+  {
+    "tool_id": "erp.post_invoice",
+    "version": "2.1.0",
+    "risk_class": "R2",
+    "description": "Posts a validated, three-way-matched invoice to the ERP as approved-for-payment, coded to a GL account and cost centre. Does NOT release payment.",
+    "input_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["vendor_id", "invoice_number", "po_reference", "line_items", "gl_account", "cost_centre"],
+      "properties": {
+        "vendor_id": { "type": "string" },
+        "invoice_number": { "type": "string" },
+        "po_reference": { "type": "string" },
+        "line_items": { "type": "array" },
+        "gl_account": { "type": "string" },
+        "cost_centre": { "type": "string" },
+        "currency": { "type": "string", "pattern": "^[A-Z]{3}$" }
+      }
+    },
+    "output_schema": { "type": "object" },
+    "auth_mode": "service_principal",
+    "compensating_action": "erp.reverse_invoice_posting",
+    "requires_human_approval": false,
+    "rate_limit": { "calls_per_minute": 30, "burst": 5 },
+    "timeout_ms": 15000
+  },
+  {
+    "tool_id": "erp.reverse_invoice_posting",
+    "version": "2.1.0",
+    "risk_class": "R2",
+    "description": "Reverses a posting made by erp.post_invoice. Idempotent.",
+    "input_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["erp_document_id", "reason"],
+      "properties": { "erp_document_id": { "type": "string" }, "reason": { "type": "string" } }
+    },
+    "output_schema": { "type": "object" },
+    "auth_mode": "service_principal",
+    "requires_human_approval": false,
+    "rate_limit": { "calls_per_minute": 30, "burst": 5 },
+    "timeout_ms": 15000
+  },
+  {
+    "tool_id": "erp.release_payment",
+    "version": "2.1.0",
+    "risk_class": "R3",
+    "description": "Releases payment for a posted invoice. IRREVERSIBLE. Always requires human approval below L4.",
+    "input_schema": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["erp_document_id"],
+      "properties": { "erp_document_id": { "type": "string" } }
+    },
+    "output_schema": { "type": "object" },
+    "auth_mode": "service_principal",
+    "requires_human_approval": true,
+    "rate_limit": { "calls_per_minute": 10, "burst": 2 },
+    "timeout_ms": 15000
+  }
+]

@@ -1,0 +1,17 @@
+# Habagat Console — customer build. Doc 51 §1.2: one engineering artifact
+# (console/shared/) producing two deployed surfaces (Doc 56 §1) — this is
+# the customer surface's image; Dockerfile.console-internal is the other.
+FROM node:20-slim AS build
+WORKDIR /app
+COPY console/shared/ ./console/shared/
+COPY console/customer/ ./console/customer/
+RUN cd console/shared && npm install && npm run typecheck && npm test
+# A real build step (`vite build` or equivalent) would run here once the
+# customer app's own bundler config is stood up — see BUILD_LOG.md for
+# why that step is not yet present in this build.
+
+FROM node:20-slim
+WORKDIR /app
+COPY --from=build /app/console ./console
+EXPOSE 8080
+CMD ["node", "console/customer/health-server.js"]

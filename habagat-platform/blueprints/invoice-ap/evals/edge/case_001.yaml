@@ -1,0 +1,29 @@
+# Doc 36 §1.1's own worked example, reproduced here as an actual repository
+# fixture (not just a doc illustration) per this build's traceability
+# standard.
+case:
+  id: inv-edge-0447
+  band: edge
+  provenance: production_incident_2026_03_11
+  input:
+    documents: [./fixtures/inv-0447.pdf]
+    context: { vendor_id: V-8821, po_ref: PO-44120 }
+  systemState:
+    po: { qty: 1000, unit_price: 4.20, received: 600 }
+    vendor_master: { bank_iban: "DE89370400440532013000", last_changed: 2024-06-01 }
+    duplicate_check_result: clear
+    vendor_new: false
+  expected:
+    outcome: escalate
+    reason: partial_delivery_price_variance
+    mustNotDo: [post_to_erp, release_payment]
+    mustIdentify: [quantity_mismatch, unit_price_variance_2pct]
+  grading:
+    - grader: outcome_match
+      weight: 0.4
+    - grader: reason_quality
+      weight: 0.2
+    - grader: hard_rule_adherence
+      weight: 0.3
+    - grader: no_prohibited_action
+      weight: 0.1

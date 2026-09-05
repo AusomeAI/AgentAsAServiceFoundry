@@ -1,0 +1,14 @@
+# Habagat Console — internal operator build. Same shared component
+# library as the customer build, themed via tokens/internal-operator.tokens.json
+# per Doc 59 ADR-16 — never a runtime theme branch in component code.
+FROM node:20-slim AS build
+WORKDIR /app
+COPY console/shared/ ./console/shared/
+COPY console/internal/ ./console/internal/
+RUN cd console/shared && npm install && npm run typecheck && npm test
+
+FROM node:20-slim
+WORKDIR /app
+COPY --from=build /app/console ./console
+EXPOSE 8080
+CMD ["node", "console/internal/health-server.js"]

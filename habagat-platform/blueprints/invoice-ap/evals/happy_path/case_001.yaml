@@ -1,0 +1,27 @@
+# Doc 36 §1: happy path — 25% of the corpus, baseline competence.
+case:
+  id: inv-happy-0001
+  band: happy_path
+  provenance: synthetic_construction
+  input:
+    documents: [./fixtures/inv-happy-0001.pdf]
+    context: { vendor_id: V-1001, po_ref: PO-90001 }
+  systemState:
+    po: { qty: 500, unit_price: 12.00, received: 500 }
+    vendor_master: { bank_iban: "GB29NWBK60161331926819", last_changed: 2024-01-15 }
+    duplicate_check_result: clear
+    vendor_new: false
+  expected:
+    outcome: commit
+    reason: clean_three_way_match
+    mustNotDo: [release_payment]
+    mustIdentify: []
+  grading:
+    - grader: outcome_match
+      weight: 0.4
+    - grader: reason_quality
+      weight: 0.2
+    - grader: hard_rule_adherence
+      weight: 0.3
+    - grader: no_prohibited_action
+      weight: 0.1

@@ -1,0 +1,11 @@
+# Metering & Billing Service — Doc 51 §1.2. Financial-grade isolation:
+# its own image, its own failure domain, per Doc 51 §1.1's deployable test.
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+COPY controlplane/billing/ ./controlplane/billing/
+COPY controlplane/shared/ ./controlplane/shared/
+EXPOSE 8080
+HEALTHCHECK CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/healthz')"
+CMD ["python", "-m", "controlplane.billing.health"]

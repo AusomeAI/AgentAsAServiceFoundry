@@ -1,0 +1,78 @@
+# Traces to: Doc 30 §4.1, Doc 53 §4.2 (this IS that worked example, as the
+# actual repository artifact rather than a doc illustration). This is the
+# reference blueprint every future blueprint's shape is copied from
+# (Doc 60 §5's task instruction).
+apiVersion: habagat.dev/v1
+kind: Agent
+metadata:
+  name: ap-invoice-agent
+  blueprint: invoice-ap@4.2.0
+  owner: pod-finance-ops
+  archetype: A2
+  useCase: X02
+spec:
+  objective: >
+    Extract, validate and post supplier invoices against purchase orders,
+    escalating exceptions to a human reviewer with a reason code, and never
+    releasing payment autonomously.
+  models:
+    primary:  { deployment: gpt-frontier, version: "2026-05-01", maxTokens: 4096 }
+    fallback: { deployment: gpt-mid,      version: "2026-04-10" }
+    routing: cascade-v2
+  memory:
+    shortTerm: thread
+    longTerm:
+      store: cosmos
+      scope: entity
+      ttlDays: 400
+      redact: [pii.email, pii.phone]
+  tools:
+    - ref: docintel.extract_invoice_fields
+      risk: R0
+    - ref: erp.lookup_po
+      risk: R0
+    - ref: erp.three_way_match
+      risk: R0
+    - ref: erp.post_invoice
+      risk: R2
+      compensatingAction: erp.reverse_invoice_posting
+    - ref: erp.release_payment
+      risk: R3
+      requiresHumanApproval: true
+  retrieval:
+    index: acme-vendor-terms
+    strategy: hybrid+semantic-rank
+    topK: 8
+    groundednessMin: 0.85
+    citationRequired: true
+  autonomy:
+    default: L2
+    maxPermitted: L3
+    blastRadius: B3
+  policy:
+    bundle: finance/ap-v4
+    preconditions:
+      - three-way-match.passed
+      - amount <= tenant.limits.autoPostCeiling
+      - duplicate-check.clear
+      - bank-details-unchanged
+    humanApprovalRequired: ["amount > 25000", "vendor.new == true", "confidence < 0.90"]
+  verification:
+    hardRules:
+      - arithmetic_foots
+      - no_duplicate_invoice
+      - bank_details_unchanged
+      - tax_rate_valid_for_jurisdiction
+    selfCheck: true
+    confidenceThreshold: 0.92
+  eval:
+    suites: [regression-ap-core]
+    gates: { field_accuracy: 0.97, hard_rule_adherence: 1.00, false_post_rate: 0.000 }
+  budgets:
+    maxSteps: 24
+    maxCostPerRunUsd: 0.85
+    costPerSuccessfulRunUsd: 0.42
+    alertAtPct: 115
+  observability:
+    traceLevel: full
+    retentionDays: tenant_policy

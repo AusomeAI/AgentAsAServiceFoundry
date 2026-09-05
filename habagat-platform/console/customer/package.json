@@ -1,0 +1,11 @@
+{
+  "name": "@habagat/console-customer",
+  "version": "0.1.0",
+  "private": true,
+  "description": "The customer Console build — Doc 59 ADR-16's second of two builds sharing @habagat/console-shared.",
+  "dependencies": {
+    "@habagat/console-shared": "*",
+    "react": "^18.3.0",
+    "react-dom": "^18.3.0"
+  }
+}

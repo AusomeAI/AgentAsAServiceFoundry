@@ -1,0 +1,20 @@
+# Policy bundle: finance/ap-v4
+# Traces to: Doc 30 §4.1, Doc 54 §7.1 (hard rules referenced by id, resolved
+# against policy/hard_rules.py's HARD_RULE_REGISTRY at compile time).
+bundle: finance/ap-v4
+hardRules:
+  - arithmetic_foots
+  - no_duplicate_invoice
+  - bank_details_unchanged
+  - tax_rate_valid_for_jurisdiction
+valueLimits:
+  max_invoice_amount: 25000
+preconditions:
+  - three-way-match.passed
+  - amount <= tenant.limits.autoPostCeiling
+  - duplicate-check.clear
+  - bank-details-unchanged
+humanApprovalRequired:
+  - "amount > 25000"
+  - "vendor.new == true"
+  - "confidence < 0.90"

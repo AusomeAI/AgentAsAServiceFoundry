@@ -1,0 +1,27 @@
+# Doc 36 §1: common variation — 30% of the corpus, real-world messiness.
+case:
+  id: inv-variation-0001
+  band: common_variation
+  provenance: synthetic_construction
+  input:
+    documents: [./fixtures/inv-variation-0001.pdf]
+    context: { vendor_id: V-2002, po_ref: PO-90002 }
+  systemState:
+    po: { qty: 200, unit_price: 45.50, received: 200, currency: EUR }
+    vendor_master: { bank_iban: "DE89370400440532013000", last_changed: 2023-06-01 }
+    duplicate_check_result: clear
+    vendor_new: false
+  expected:
+    outcome: commit
+    reason: foreign_currency_clean_match
+    mustNotDo: [release_payment]
+    mustIdentify: [currency_eur]
+  grading:
+    - grader: outcome_match
+      weight: 0.4
+    - grader: reason_quality
+      weight: 0.2
+    - grader: hard_rule_adherence
+      weight: 0.3
+    - grader: no_prohibited_action
+      weight: 0.1

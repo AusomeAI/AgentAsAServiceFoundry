@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://habagat.dev/schemas/agent-spec/v1.json",
+  "title": "Habagat Agent Spec",
+  "$comment": "Copied verbatim from docs/habagat/architecture/53-api-and-interface-contracts.md §4.1. This file is normative — do not hand-edit without updating Doc 53 to match, and vice versa. Every compile-time check in compiler/enforcement.py validates against THIS file, not a re-derivation of the prose.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["apiVersion", "kind", "metadata", "spec"],
+  "properties": {
+    "apiVersion": { "const": "habagat.dev/v1" },
+    "kind": { "const": "Agent" },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "blueprint", "owner"],
+      "properties": {
+        "name": { "type": "string" },
+        "blueprint": { "type": "string", "pattern": "^[a-z0-9-]+@\\d+\\.\\d+\\.\\d+$" },
+        "owner": { "type": "string", "description": "owning pod, e.g. pod-finance-ops" },
+        "archetype": { "type": "string", "enum": ["A1","A2","A3","A4","A5","A6","A7","A8"] },
+        "useCase": { "type": "string", "description": "e.g. X02, BFS-03 — Doc 00/01/02-21 reference code" }
+      }
+    },
+    "spec": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["objective", "models", "tools", "policy", "eval", "budgets"],
+      "properties": {
+        "objective": { "type": "string", "minLength": 20 },
+        "models": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["primary", "fallback"],
+          "properties": {
+            "primary":  { "$ref": "#/$defs/modelRef" },
+            "fallback": { "$ref": "#/$defs/modelRef" },
+            "routing":  { "type": "string", "description": "named cascade policy, CTO Doc 04 §2" }
+          }
+        },
+        "memory": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "shortTerm": { "type": "string", "enum": ["thread"] },
+            "longTerm": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "store": { "const": "cosmos" },
+                "scope": { "type": "string", "enum": ["run", "session", "entity", "blueprint"] },
+                "ttlDays": { "type": "integer", "minimum": 1 },
+                "redact": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "tools": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/toolReference" },
+          "minItems": 1
+        },
+        "retrieval": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "index": { "type": "string" },
+            "strategy": { "type": "string", "enum": ["hybrid+semantic-rank", "vector-only", "keyword-only"] },
+            "topK": { "type": "integer", "minimum": 1, "maximum": 50 },
+            "groundednessMin": { "type": "number", "minimum": 0, "maximum": 1 },
+            "citationRequired": { "type": "boolean", "default": true }
+          }
+        },
+        "autonomy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["default", "maxPermitted", "blastRadius"],
+          "properties": {
+            "default": { "type": "string", "enum": ["L0","L1","L2","L3","L4"] },
+            "maxPermitted": { "type": "string", "enum": ["L0","L1","L2","L3","L4"] },
+            "blastRadius": { "type": "string", "enum": ["B1","B2","B3","B4"] }
+          }
+        },
+        "policy": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["bundle"],
+          "properties": {
+            "bundle": { "type": "string", "description": "reference to a versioned policy bundle" },
+            "preconditions": { "type": "array", "items": { "type": "string" } },
+            "humanApprovalRequired": { "type": "array", "items": { "type": "string" } }
+          }
+        },
+        "verification": {
+          "$comment": "Not present in Doc 53 §4.1's schema block verbatim, but referenced by Doc 30 §4.1's illustrative blueprint AND consumed directly by harness/verifier.py's hard-rule layer (Doc 54 §7.1). Added here as an additive field, not a contradiction, since the top-level `spec` schema is additionalProperties:false and Doc 30 §4.1 already shows this key in production use — flagged in BUILD_LOG.md as a schema-source reconciliation, not invented scope.",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "hardRules": { "type": "array", "items": { "type": "string" } },
+            "selfCheck": { "type": "boolean", "default": true },
+            "confidenceThreshold": { "type": "number", "minimum": 0, "maximum": 1 }
+          }
+        },
+        "eval": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["suites", "gates"],
+          "properties": {
+            "suites": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+            "gates": {
+              "type": "object",
+              "description": "grader name -> threshold; see Doc 36 §3",
+              "additionalProperties": { "type": "number" }
+            }
+          }
+        },
+        "budgets": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["maxSteps", "maxCostPerRunUsd"],
+          "properties": {
+            "maxSteps": { "type": "integer", "minimum": 1, "maximum": 200 },
+            "maxCostPerRunUsd": { "type": "number", "exclusiveMinimum": 0 },
+            "costPerSuccessfulRunUsd": { "type": "number", "description": "target, for cost-drift alerting, CTO Doc 03 §4.3" },
+            "alertAtPct": { "type": "integer", "minimum": 100, "maximum": 500 }
+          }
+        },
+        "observability": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "traceLevel": { "type": "string", "enum": ["full", "sampled"] },
+            "retentionDays": { "type": "string", "enum": ["tenant_policy"] }
+          }
+        }
+      }
+    }
+  },
+  "$defs": {
+    "modelRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["deployment", "version"],
+      "properties": {
+        "deployment": { "type": "string" },
+        "version": { "type": "string", "description": "explicit provider version string — auto-upgrade forbidden, CTO Doc 03 §3.4" },
+        "maxTokens": { "type": "integer" }
+      }
+    },
+    "toolReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ref", "risk"],
+      "properties": {
+        "ref": { "type": "string" },
+        "risk": { "type": "string", "enum": ["R0","R1","R2","R3"] },
+        "compensatingAction": { "type": "string" },
+        "requiresHumanApproval": { "type": "boolean" }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "risk": { "const": "R2" } } },
+          "then": { "required": ["compensatingAction"] }
+        },
+        {
+          "if": { "properties": { "risk": { "const": "R3" } } },
+          "then": {
+            "required": ["requiresHumanApproval"],
+            "properties": { "requiresHumanApproval": { "const": true } }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+# Evaluation Service — Doc 51 §1.2.
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt ./requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+COPY eval/ ./eval/
+COPY controlplane/evaluation_service/ ./controlplane/evaluation_service/
+COPY controlplane/shared/ ./controlplane/shared/
+EXPOSE 8080
+HEALTHCHECK CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8080/healthz')"
+CMD ["python", "-m", "controlplane.evaluation_service.health"]
