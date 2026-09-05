@@ -279,7 +279,7 @@ Anything on that list requiring a Platform human is tracked as a **golden-path d
 ## 7. Career ladder and knowledge
 
 - Two tracks (IC to Principal, Manager to Director) with parity at Staff/EM. Deliberate, because our senior talent is scarce and we cannot force architects into management.
-- **Every P1 produces a written blameless review; every architecture bet produces an ADR; every agent produces a spec.** These three artifact classes are the company's institutional memory and are the mitigation for key-person risk (doc 05 Q19).
+- **Every P1 produces a written blameless review; every architecture bet produces an ADR; every agent produces a spec.** These three artifact classes are the company's institutional memory and are the mitigation for key-person risk (doc 05 Q22).
 - Domain SMEs get a real ladder (Associate → Senior → Principal Domain SME) — otherwise we cannot retain them against industry salaries.
 
 ---

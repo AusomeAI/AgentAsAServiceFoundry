@@ -209,32 +209,32 @@ Higher margin %, lower revenue per run ($16,000/mo vs $27,500/mo), and — impor
 | Runs/month per tenant | 200,000 | 50,000 | 800 |
 | Primary tier | Small (frontier escalation 5%) | Mid (frontier escalation 30%) | Frontier throughout, multi-agent |
 | Tokens per run (in/out, blended) | 3,000 / 300 | 13,700 / 1,340 | 180,000 / 12,000 |
-| Model cost/run | $0.0028 | $0.0414 | $1.72 |
+| Model cost/run | $0.0051 | $0.0414 | $1.72 |
 | Retrieval + docAI + tools | $0.0035 | $0.0265 | $0.34 |
-| Orchestration + fleet ops | $0.0090 | $0.0480 | $2.10 |
+| Orchestration + fleet ops | $0.0120 | $0.0480 | $3.00 |
 | Human review | 2% × $0.73 (2 min) = $0.0147 | 8% × $1.467 = $0.1174 | 60% × 60 min SME @ $75/hr ($75.00) = $45.00 |
-| **COGS/run** | **$0.0300** | **$0.2333** | **$49.16** |
-| **Price/run** | **$0.075** | **$0.55** | **$135.00** |
-| **Gross margin** | **60.0%** | **57.6%** | **63.6%** |
-| Monthly revenue | $15,000 | $27,500 | $108,000 |
+| **COGS/run** | **$0.0353** | **$0.2333** | **$50.06** |
+| **Price/run** | **$0.090** | **$0.55** | **$135.00** |
+| **Gross margin** | **60.8%** | **57.6%** | **62.9%** |
+| Monthly revenue | $18,000 | $27,500 | $108,000 |
 | Human baseline being displaced | $0.60/item (clerk, 1.5 min) | $4.20/invoice | $650/document (2 specialist days at loaded rate) |
-| Customer saving | 87% | 87% | 79% |
+| Customer saving | 85% | 87% | 79% |
 | Margin sensitivity | Token price and orchestration floor | Autonomy rate | Expert-review time |
 | Where the lever is | Distillation, caching, batching | **Autonomy rate**, small-model routing | Decomposition + tool use to cut expert minutes |
 
-Notes on archetype C: the fixed per-tenant floor ($900 + $1,500 = $2,400/mo over 800 runs = $3.00/run) is material, and the SME review at $75/hour dominates. **For high-complexity agents our engineering effort should target minutes-of-expert-time-per-run, not tokens.** Cutting review from 60 to 35 minutes moves COGS from $49.16 to $30.41 and margin from 63.6% to 77.5% — vastly more than any token optimization could deliver.
+Notes on archetype C: the fixed per-tenant floor ($900 + $1,500 = $2,400/mo over 800 runs = $3.00/run) is material, and the SME review at $75/hour dominates. **For high-complexity agents our engineering effort should target minutes-of-expert-time-per-run, not tokens.** Cutting review from 60 to 35 minutes moves COGS from $50.06 to $31.31 and margin from 62.9% to 76.8% — vastly more than any token optimization could deliver.
 
 ### 4.4 Blended portfolio view (illustrative, FY27)
 
 | | Count | Avg monthly revenue each | Revenue | Avg GM | Gross profit |
 |---|---:|---:|---:|---:|---:|
-| Archetype A agents | 12 | $15,000 | $180,000 | 60% | $108,000 |
+| Archetype A agents | 12 | $18,000 | $216,000 | 61% | $131,760 |
 | Archetype B agents | 30 | $27,500 | $825,000 | 58% | $478,500 |
 | Archetype C agents | 8 | $108,000 | $864,000 | 64% | $552,960 |
 | Platform/isolation fee (per tenant, 30 tenants) | 30 | $3,500 | $105,000 | 85% | $89,250 |
-| **Total** | | | **$1,974,000/mo** | **62.1%** | **$1,228,710/mo** |
+| **Total** | | | **$2,010,000/mo** | **62.3%** | **$1,252,470/mo** |
 
-Annualized: ~$23.7M revenue at ~62% gross margin. The **platform/isolation fee is important**: it recovers the per-tenant fixed floor independent of volume and protects us against low-usage tenants dragging margin negative.
+Annualized: ~$24.1M revenue at ~62% gross margin. The **platform/isolation fee is important**: it recovers the per-tenant fixed floor independent of volume and protects us against low-usage tenants dragging margin negative.
 
 ---
 
