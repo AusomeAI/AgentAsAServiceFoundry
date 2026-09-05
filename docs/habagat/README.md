@@ -15,7 +15,7 @@ A fresh, first-principles study of where AI agents can transform enterprise work
 | **Industries covered** | 20 |
 | **Delivery model** | Agent as a Service — single-tenant, one isolated Azure tenant/subscription per customer |
 | **Platform** | Microsoft Azure AI Foundry + Azure |
-| **Documents** | 30 |
+| **Documents** | 40 |
 
 Every use case is specified as a closed loop — **trigger → workflow → systems → outcome → KPIs → human gate** — so it can be lifted directly into a delivery backlog.
 
@@ -83,10 +83,26 @@ Produced by a dedicated **CTO Agent**.
 | [40](business/40-business-model-and-gtm.md) | **Business Model & Go-to-Market** — pricing architecture, landing sequence, unit economics, competitive positioning |
 | [41](business/41-investor-narrative.md) | **Investor Narrative** — the story, the four assets, the traction plan, the risks we raise ourselves |
 
-### Next artefact
+### Application architecture
+Produced by a dedicated **Software Architect Agent**, run from Doc 50's prompt.
+
 | Doc | Title |
 |---|---|
-| [50](agents/50-software-architect-agent-prompt.md) | **Software Architect Agent Prompt** — ready to run, produces the application architecture (Docs 51–59) |
+| [51](architecture/51-application-architecture-overview.md) | Application architecture overview — service decomposition, bounded contexts, C4 diagrams |
+| [52](architecture/52-domain-model-and-data-design.md) | Domain model & data design — entities, aggregates, Cosmos/SQL/Search schemas |
+| [53](architecture/53-api-and-interface-contracts.md) | API & interface contracts — Control Plane API, Tool Interface, Blueprint Spec JSON Schema |
+| [54](architecture/54-harness-detailed-design.md) | Harness detailed design — the seven subsystems, the saga engine, the envelope algorithm |
+| [55](architecture/55-control-plane-design.md) | Control plane design — Registry, Fleet Manager, Provisioning, Evaluation, Billing |
+| [56](architecture/56-frontend-and-experience-architecture.md) | Frontend & experience architecture — the Console, the human-review screen, Teams integration |
+| [57](architecture/57-integration-and-connector-framework.md) | Integration & connector framework — reference connectors, ingestion, deletion propagation |
+| [58](architecture/58-non-functional-requirements-and-slos.md) | NFRs & SLOs — performance, scaling breakpoints, security traceability, cost enforcement |
+| [59](architecture/59-architecture-decision-records.md) | Architecture decision records — ADR-09 through ADR-19 |
+
+### Next artefacts
+| Doc | Title |
+|---|---|
+| [50](agents/50-software-architect-agent-prompt.md) | **Software Architect Agent Prompt** — ready to run, produced the application architecture above |
+| [60](agents/60-development-team-agent-prompts.md) | **Build Team Prompts** — UI/UX Designer + Software Engineer agent prompts that build the actual codebase, design artifacts, and the per-tenant Infra-as-Code |
 
 ---
 
