@@ -155,6 +155,10 @@ export function EscalationReview(props: EscalationReviewProps): JSX.Element {
   );
 }
 
-function capitalize<T extends string>(s: T): string {
-  return s[0].toUpperCase() + s.slice(1);
+type Capitalized<S extends string> = S extends `${infer First}${infer Rest}`
+  ? `${Uppercase<First>}${Rest}`
+  : S;
+
+function capitalize<T extends string>(s: T): Capitalized<T> {
+  return (s[0].toUpperCase() + s.slice(1)) as Capitalized<T>;
 }

@@ -10,6 +10,8 @@ import time
 from dataclasses import dataclass, field
 from typing import Any, Callable, Protocol
 
+import jsonschema
+
 from harness.domain import PolicyEnvelope, RiskClass, ToolCall, ToolCallStatus
 from harness.policy_engine import check_tool_allowed
 
@@ -131,11 +133,22 @@ class ToolGateway:
             compensating_action_id=declaration.get("compensating_action") if declaration else None,
         )
 
-        # 1. Schema validation of arguments — omitted here in favor of a
-        # dedicated jsonschema check in tools/contract.py, called by
-        # blueprint-level integration tests; kept out of the gateway's hot
-        # path to avoid a second full jsonschema dependency chain in this
-        # reference implementation (see BUILD_LOG.md).
+        # 1. Schema validation of arguments — Doc 54 §5.4's required
+        # round-trip test coverage: valid input passes, a missing required
+        # field fails, an extra field is rejected (input_schema declares
+        # additionalProperties: false per Doc 53 §3.1's worked example).
+        # Runs BEFORE the policy check per Doc 54 §5.2's sequence — a
+        # malformed call is rejected on its own terms, not laundered
+        # through the policy/rate-limit/circuit-breaker machinery first.
+        if declaration is not None:
+            input_schema = declaration.get("input_schema")
+            if input_schema:
+                try:
+                    jsonschema.validate(arguments, input_schema)
+                except jsonschema.ValidationError as e:
+                    tool_call.status = ToolCallStatus.FAILED
+                    tool_call.denial_reason = f"Schema validation failed: {e.message}"
+                    return tool_call
 
         # 2. Policy check — deny by default.
         allowed, reason = check_tool_allowed(envelope, tool_id)
@@ -176,6 +189,22 @@ class ToolGateway:
 
         # 7. Sanitize.
         sanitized = sanitize_result(tool_id, raw_result)
+
+        # 8. Schema validation of the RESULT — Doc 54 §5.2's sequence ends
+        # with "schema validate result" (validated against output_schema,
+        # against the raw connector result, before sanitize's wrapping —
+        # sanitize's own envelope shape is fixed by sanitize_result() and
+        # isn't itself subject to the tool's declared output_schema).
+        if declaration is not None:
+            output_schema = declaration.get("output_schema")
+            if output_schema:
+                try:
+                    jsonschema.validate(raw_result, output_schema)
+                except jsonschema.ValidationError as e:
+                    tool_call.status = ToolCallStatus.FAILED
+                    tool_call.denial_reason = f"Result failed output_schema validation: {e.message}"
+                    return tool_call
+
         tool_call.result = sanitized
         tool_call.status = ToolCallStatus.EXECUTED
         return tool_call

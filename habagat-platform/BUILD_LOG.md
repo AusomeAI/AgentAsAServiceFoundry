@@ -1,5 +1,51 @@
 # Build log: decisions and gaps
 
+## 0. Follow-up pass (closing gaps found after the initial build)
+
+The initial build's report flagged several deliberate scope decisions.
+Two of those turned out, on closer inspection, to be real gaps rather than
+legitimate scope cuts — closed in this follow-up pass:
+
+- **Doc 58 §7's E2E terminal-state requirement** ("every terminal state in
+  Doc 54 §2.2's diagram has at least one E2E test reaching it") was not
+  covered by the initial build's unit tests, which exercised the Run
+  Manager's methods and the Saga Coordinator's `unwind()` separately but
+  never drove a Run through the full realistic sequence end to end.
+  **Closed:** `harness/tests/test_e2e_terminal_states.py`, seven tests
+  covering `committed`, `escalated→committed`, `escalated→failed`,
+  `failed` (direct, on budget exhaustion), `compensating→failed` (full
+  unwind), and `compensation_failed` (partial unwind) — all six required
+  terminal states.
+- **Doc 54 §5.4's schema round-trip tests** ("valid input passes, each
+  required field's absence fails, an extra field is rejected") were
+  explicitly deferred in `harness/tool_gateway.py`'s original comment
+  ("omitted here in favor of a dedicated jsonschema check in
+  tools/contract.py") — but `tools/contract.py` never actually performed
+  that check; the deferral pointed at code that didn't exist. This was a
+  real, uncovered gap in a Doc 58 §7 zero-tolerance test suite (Tool
+  Gateway), not a legitimate scope decision. **Closed:** `ToolGateway.call()`
+  now validates arguments against `input_schema` (step 1) and the raw
+  connector result against `output_schema` (step 8) via `jsonschema`,
+  matching Doc 54 §5.2's exact call sequence; three round-trip tests run
+  against the real `blueprints/invoice-ap/tools/declarations.json` (not a
+  synthetic fixture), plus the injection-in-result companion test Doc 54
+  §5.4 also names ("a companion integration test asserts the Policy
+  Engine's envelope... is unchanged by it").
+- **Console customer screen was never typechecked** against
+  `@habagat/console-shared` (no `tsconfig.json` existed for
+  `console/customer/`). Adding one surfaced one real type error (passing
+  a lowercase action string where `disabledActionAriaLabel` expects the
+  capitalized literal union) — fixed with a template-literal-typed
+  `capitalize()` helper rather than a type-cast, so the fix stays real
+  under future edits. CI's `console` job now typechecks this screen too.
+- **Coverage measured, not just estimated**, on the three subsystems Doc
+  58 §7 names as needing ≥90% line coverage: Policy Engine 99%, Verifier
+  100%, Saga Coordinator 94% — all comfortably above the bar; the small
+  gaps remaining are defensive/unreachable-by-design branches (a Saga
+  Coordinator branch handling a `compensating_action_id`-less R2 write,
+  which the compiler already refuses to produce per Doc 59 ADR-14).
+
+
 > Written per the Software Engineer Agent prompt's explicit instruction:
 > "When you hit a gap or conflict... record it here rather than silently
 > resolving it, using the most conservative reading until a human decides."
@@ -230,7 +276,7 @@ with `terraform` available should run `terraform validate` and
 
 | Area | Status |
 |---|---|
-| `spec/`, `compiler/`, `policy/`, `eval/`, `harness/` (all 8 modules), `blueprints/invoice-ap/`, `tools/` (3 connectors) | Complete, fully tested (128 Python tests passing, 1 documented skip for crash-resume — needs a real Cosmos-backed integration environment) |
+| `spec/`, `compiler/`, `policy/`, `eval/`, `harness/` (all 8 modules), `blueprints/invoice-ap/`, `tools/` (3 connectors) | Complete, fully tested (139 Python tests passing, 1 documented skip for crash-resume — needs a real Cosmos-backed integration environment); Doc 54 §2.4/§3.5/§4.4/§5.4's four named test suites and Doc 58 §7's E2E-terminal-state and ≥90%-coverage requirements all verified explicitly, see §0 |
 | `controlplane/` (5 services) | Domain/service logic complete and tested; no live HTTP transport (§4.1) |
 | `console/shared` | Complete, typed, 27 passing tests; two consuming app builds (`customer/`, `internal/`) have one composed screen each but no bundler pipeline (§4.3) |
 | `cli/` | 4 of 8 CTO Doc 03 §1.3 golden paths implemented with real logic; remaining 4 fail loudly, not silently (§4.2) |

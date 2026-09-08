@@ -172,3 +172,8 @@ jobs:
           npm install
           npm run typecheck
           npm test
+      - name: Typecheck the customer Console screen against @habagat/console-shared
+        run: |
+          cd habagat-platform/console/customer
+          ln -sfn ../shared/node_modules node_modules
+          npx --yes tsc --noEmit -p tsconfig.json
